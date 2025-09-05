@@ -16,7 +16,7 @@ export default function ChangeMode() {
 	};
 
 	return (
-		<button className="btn btn-sm" onClick={toggleTheme}>
+		<button className="btn btn-sm rounded-lg" onClick={toggleTheme}>
 		 mode {theme === "fantasy" ? "night" : "fantasy"}
 		</button>
 	);

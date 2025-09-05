@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div style={{ position: "fixed", top: 16, right: 16, zIndex: 100 }}>
+        <div style={{ top: 16, right: 16, zIndex: 100 }}>
           <ChangeMode />
         </div>
         {children}

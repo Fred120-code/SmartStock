@@ -2,3 +2,12 @@
 @plugin "daisyui" {
    themes: light --default, dark --prefersdark , fantasy;
  }
+ html[data-theme="fantasy"] {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+html[data-theme="night"] {
+  background-color: #0f172a; /* gris foncé/bleu nuit */
+  color: #f8fafc;
+}

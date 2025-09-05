@@ -1,9 +1,11 @@
-import Image from "next/image";
+"use client"
+import Wrapper from "./components/Wrapper";
 
 export default function Home() {
   return (
-   <div className="flex justify-center items-center">
-    <button className="btn btn-sm">bonjour</button>
-   </div>
+    <Wrapper>
+      <button className="btn btn-sm">bonjour</button>
+    </Wrapper>
   );
 }
+ 
