@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-   <div>
+   <div className="flex justify-center items-center">
     <button className="btn btn-sm">bonjour</button>
    </div>
   );
