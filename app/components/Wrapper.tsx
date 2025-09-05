@@ -13,9 +13,12 @@ const Wrapper = ({ children }: WrapperProps) => {
         position="top-center"
         autoClose = {500}
         hideProgressBar={false}
-        newestOnTop={}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnHover
+        draggable
       />
-
+        
       <div className="px-5 md:px-[10%] mt-8 mb-10">{children}</div>
     </div>
   );
