@@ -120,3 +120,4 @@ export async function readCeategory(
     console.error("Error creating category:", error);
   }
 }
+ 
