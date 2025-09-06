@@ -1,10 +1,21 @@
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { Blocks, Icon, ListTodo, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { checkAndAddAssociation } from "../actions";
 
 const NavBar = () => {
+  //recuperation des utilisateur connectés
+  const { user } = useUser()
+
+  useEffect(()=>{
+    if(user?.primaryEmailAddress?.emailAddress && user.fullName){
+      checkAndAddAssociation(user?.primaryEmailAddress?.emailAddress , user.fullName)
+    }
+  }, [user])
+
+  //tableau contenant les elements de la navbar
   const navLinks = [
     {
       href: "/category",
