@@ -1,0 +1,71 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Association {
+  id          String        @id @default(uuid())
+  name        String
+  email       String     @unique
+
+  categories   Category[]
+  products     Product[]
+  transactions Transaction[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Category {
+  id            String       @id @default(uuid())
+  name          String
+  description   String?
+  
+  association   Association? @relation(fields: [associationId], references: [id])
+  associationId String?
+
+  products      Product[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Product {
+  id            String       @id @default(uuid())
+  name          String
+  quantity      Int       @default(0)
+  description   String
+  price         Float
+  unit          String
+  imageUrl      String
+
+  category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId    String
+
+  association   Association? @relation(fields: [associationId], references: [id])
+  associationId String?
+
+  transactions  Transaction[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Transaction {
+  id            String       @id @default(uuid())
+  type          String
+  quantity      Int
+
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId     String
+
+  association   Association? @relation(fields: [associationId], references: [id])
+  associationId String?
+
+  createdAt     DateTime  @default(now())
+}
