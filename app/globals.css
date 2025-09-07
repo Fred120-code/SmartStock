@@ -2,12 +2,28 @@
 @plugin "daisyui" {
    themes: light --default, dark --prefersdark , fantasy;
  }
- html[data-theme="fantasy"] {
+
+html[data-theme="fantasy"] {
   background-color: #ffffff;
   color: #000000;
+}
+html[data-theme="fantasy"] h3 {
+  color: #000 !important;
 }
 
 html[data-theme="night"] {
   background-color: #0f172a; /* gris foncé/bleu nuit */
-  color: #f8fafc;
+  color: #ffffff;
 }
+html[data-theme="night"] h3 {
+  color: #000 !important;
+}
+html[data-theme="night"] ::placeholder {
+  color: #000 !important;
+  opacity: 1;
+}
+html[data-theme="fantasy"] ::placeholder {
+  color: #000 !important;
+  opacity: 1;
+}
+
