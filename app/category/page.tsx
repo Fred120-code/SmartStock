@@ -59,6 +59,8 @@ const page = () => {
     if (email) {
       await createCategory(name, email, description);
     }
+    
+    await loadCategory();
     closeCreateModal();
     setLoading(false);
     toast.success("Categories creer avec succes");
@@ -70,9 +72,22 @@ const page = () => {
     if (email) {
       await updateCategory(editCategoryId, email, name, description);
     }
+
+    await loadCategory();
     closeCreateModal();
     setLoading(false);
     toast.success("Categories miseà jour avec succes.");
+  };
+
+  const openEditModal = (categorie: Category) => {
+    setName(categorie.name);
+    setDescription(categorie.description || "");
+    setEditCategoryId(categorie.id);
+    setEditMode(true);
+
+    (
+      document.getElementById("Category_modal") as HTMLDialogElement
+    )?.showModal();
   };
 
   return (
@@ -87,10 +102,32 @@ const page = () => {
           </button>
         </div>
 
-        {categorie.length > 0 ? <div>d</div> : <EmphyState
-          message={"Aucune categorie disponibe"}
-          IconComponent="Group"
-        />}
+        {categorie.length > 0 ? (
+          <div>
+            {categorie.map((categorie) => (
+              <div
+                key={categorie.id}
+                className="flex mb-2 p-5 border-2 border-base-200 rounded-3xl justify-between items-center"
+              >
+                <div>
+                  <strong>{categorie.name}</strong>
+                  <div className="text-sm">{categorie.description}</div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    className="btn btn-sm"
+                    onClick={() => openEditModal(categorie)}
+                  ></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmphyState
+            message={"Aucune categorie disponibe"}
+            IconComponent="Group"
+          />
+        )}
       </div>
       <CategorieModal
         name={name}
