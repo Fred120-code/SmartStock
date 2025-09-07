@@ -56,8 +56,8 @@ export async function createCategory(
 
 export async function updateCategory(
   id: string,
-  name: string,
   email: string,
+  name: string,
   description?: string
 ) {
   if (!email || !name || !id) {
@@ -70,7 +70,7 @@ export async function updateCategory(
       throw new Error("Aucune association trouvée avec cet email.");
     }
     await prisma.category.update({
-      where: { id: id, associationId: association.id },
+      where: { id: id },
       data: {
         name,
         description: description || "",
@@ -78,7 +78,7 @@ export async function updateCategory(
       },
     });
   } catch (error) {
-    console.error("Error creating category:", error);
+    console.error("Error updating category:", error);
   }
 }
 

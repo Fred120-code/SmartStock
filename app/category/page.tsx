@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper";
 import CategorieModal from "../components/CategorieModal";
 import { useUser } from "@clerk/nextjs";
-import { createCategory, readCeategory, updateCategory } from "../actions";
+import { createCategory, deleteCategory, readCeategory, updateCategory } from "../actions";
 import { toast } from "react-toastify";
 import { Category } from "@prisma/client";
 import EmphyState from "../components/EmphyState";
+import { Pencil, Recycle, Trash } from "lucide-react";
 
 const page = () => {
   //importation de l'email de l'utilisateur
@@ -55,7 +56,7 @@ const page = () => {
   };
 
   const handleCreateCategory = async () => {
-    setLoading(false);
+    setLoading(true);
     if (email) {
       await createCategory(name, email, description);
     }
@@ -68,7 +69,7 @@ const page = () => {
 
   const handleUpdateCategory = async () => {
     if (!editCategoryId) return;
-    setLoading(false);
+    setLoading(true);
     if (email) {
       await updateCategory(editCategoryId, email, name, description);
     }
@@ -76,18 +77,29 @@ const page = () => {
     await loadCategory();
     closeCreateModal();
     setLoading(false);
-    toast.success("Categories miseà jour avec succes.");
+    toast.success("Categories mise à jour avec succes.");
   };
 
+  //afficher le Modal de modification
   const openEditModal = (categorie: Category) => {
     setName(categorie.name);
-    setDescription(categorie.description || "");
-    setEditCategoryId(categorie.id);
+    setDescription(categorie.description || ""); 
     setEditMode(true);
+    setEditCategoryId(categorie.id);
 
     (
       document.getElementById("Category_modal") as HTMLDialogElement
     )?.showModal();
+  };
+
+  //supprimer une category
+   const handleDeleteCategory = async (categorieId: string) => {
+    const confirDelet = confirm( "si vous suprimez cette categorie, tout les produits associés seront egalement supprimés, etes-vous d'accord ?")
+    if(!confirDelet) return;
+
+    await deleteCategory(categorieId, email)
+    await loadCategory();
+    toast.success("Categories supprimée avec succes")
   };
 
   return (
@@ -115,9 +127,17 @@ const page = () => {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    className="btn btn-sm"
+                    className="btn btn-sm rounded-sm"
                     onClick={() => openEditModal(categorie)}
-                  ></button>
+                  >
+                    <Pencil className="w-4 h-4"/>
+                  </button>
+                  <button
+                    className="btn btn-sm btn-error rounded-sm"
+                    onClick={() => handleDeleteCategory(categorie.id)}
+                  >
+                    <Trash className="w-4 h-4"/>
+                  </button>
                 </div>
               </div>
             ))}
