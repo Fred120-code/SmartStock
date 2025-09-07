@@ -12,7 +12,7 @@ const Wrapper = ({ children }: WrapperProps) => {
       <Navbar/>
       <ToastContainer 
         position="top-center"
-        autoClose = {500}
+        autoClose = {2500}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
