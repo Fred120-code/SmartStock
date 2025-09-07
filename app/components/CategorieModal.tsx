@@ -48,7 +48,7 @@ const CategorieModal: React.FC<Props> = ({
           onChange={(e) => onChangeDescription(e.target.value)}
           className="input input-bordered w-full mb-4"
         />
-        <button className="btn btn-primary" onClick={onSubmit}>
+        <button className="btn btn-primary" onClick={onSubmit} disabled={loading}>
           {loading
             ? editMode 
               ? "Modifcation..."
