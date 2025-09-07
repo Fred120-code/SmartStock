@@ -31,7 +31,7 @@ const CategorieModal: React.FC<Props> = ({
             X
           </button>
         </form>
-        <h3 className="font-bold text-lg">
+        <h3 className="font-bold text-lg mb-4">
           {editMode ? "Modifier la categorie" : "Nouvelle categorie"}
         </h3>
         <input
@@ -50,7 +50,7 @@ const CategorieModal: React.FC<Props> = ({
         />
         <button className="btn btn-primary" onClick={onSubmit}>
           {loading
-            ? editMode
+            ? editMode 
               ? "Modifcation..."
               : "Ajout.."
             : editMode
