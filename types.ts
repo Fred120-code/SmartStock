@@ -9,3 +9,9 @@ export interface FormDataType {
   categoryName?: string;
   imageUrl?: string;
 }
+
+import { Product as PrismaProduct} from "@prisma/client"
+
+export interface Product extends PrismaProduct{
+    categoryName: string;
+}
