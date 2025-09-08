@@ -1,5 +1,5 @@
 import { UserButton, useUser } from "@clerk/nextjs";
-import { Blocks, Icon, ListTodo, Menu, X } from "lucide-react";
+import { Blocks, Icon, ListTodo, Menu, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -21,6 +21,11 @@ const NavBar = () => {
       href: "/category",
       label: "Catégories",
       icon: ListTodo,
+    },
+     {
+      href: "/new_product",
+      label: "Nouveau produits",
+      icon: ShoppingCart,
     },
   ];
 
