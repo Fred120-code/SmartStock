@@ -1,7 +1,11 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { FormDataType } from "@/types";
 import { Category } from "@prisma/client";
+
+
+// fonctions de traitement des associations
 
 export async function checkAndAddAssociation(email: string, name: string) {
   if (!email) return;
@@ -121,3 +125,23 @@ export async function readCeategory(
   }
 }
  
+// fonctions de traitement des produits
+
+export async function createProduct(formData:FormDataType, email: string) {
+  if (!email) {
+    throw new Error("l'email est requis.");
+  }
+  try {
+    const association = await getAssociation(email);
+
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+    const categories = await prisma.category.findMany({
+      where: { associationId: association.id },
+    });
+    return categories;
+  } catch (error) {
+    console.error("Error creating category:", error);
+  }
+}
