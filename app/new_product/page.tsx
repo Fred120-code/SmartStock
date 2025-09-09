@@ -6,6 +6,7 @@ import { Category } from "@prisma/client";
 import { FormDataType } from "@/types";
 import { readCeategory } from "../actions";
 import { FileImage } from "lucide-react";
+import ProductImage from "../components/ProductImage";
 
 const page = () => {
   //importation de l'email de l'utilisateur
@@ -133,7 +134,12 @@ const page = () => {
                 {
                   previewUrl && previewUrl !== "" ? (
                     <div>
-                          eddgf
+                          <ProductImage 
+                            src={previewUrl}
+                            alt="preview"
+                            heightClass="h-40"
+                            widhtClass="w-40"
+                          />
                     </div>
                   ): (
                     <div>
