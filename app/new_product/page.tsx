@@ -16,18 +16,18 @@ const page = () => {
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
   //pour le nivagation
-  const router = useRouter()
+  const router = useRouter();
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [ formData, setFormData] = useState<FormDataType>({
+  const [formData, setFormData] = useState<FormDataType>({
     name: "",
     description: "",
     price: 0,
     categoryId: "",
     unit: "",
-    imageUrl: ""
+    imageUrl: "",
   });
 
   const handleChange = (
@@ -41,13 +41,13 @@ const page = () => {
 
   useEffect(() => {
     const fetchCateogories = async () => {
-      if (email) {
-        const data = await readCeategory(email);
-        if (data) {
-          setCategories(data);
-        }
-      }
       try {
+        if (email) {
+          const data = await readCeategory(email);
+          if (data) {
+            setCategories(data);
+          }
+        }
       } catch (error) {
         console.error("Erreur lors du chargement des categories");
       }
@@ -68,28 +68,25 @@ const page = () => {
       toast.error("Veuillez selectionner une image");
       return;
     }
-    try{  
-      const imagedata = new FormData() 
-      imagedata.append("file", file)
+    try {
+      const imagedata = new FormData();
+      imagedata.append("file", file);
       const res = await fetch("api/uploads", {
         method: "POST",
-        body: imagedata
-      })
+        body: imagedata,
+      });
 
-      const data =await res.json()
-      if(!data.succes){
-        throw new Error("Erreur lors de l'upload de l'image")
-      }else{
-        formData.imageUrl = data.path
-        await createProduct(
-          formData, email
-        )
-        toast.success("Produit creer avec succes")
-        router.push("/products")
+      const data = await res.json();
+      if (!data.succes) {
+        throw new Error("Erreur lors de l'upload de l'image");
+      } else {
+        formData.imageUrl = data.path;
+        await createProduct(formData, email);
+        toast.success("Produit creer avec succes");
+        router.push("/products");
       }
-
-    }catch(error){
-      console.error(error)
+    } catch (error) {
+      console.error(error);
       toast.error("Erreur");
     }
   };

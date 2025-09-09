@@ -12,7 +12,7 @@ export async function POST(request:NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const uploaDir = join(process.cwd(), "piblic", "uploads")
+    const uploaDir = join(process.cwd(), "public", "uploads")
     
     if(!existsSync(uploaDir)){
         await mkdir(uploaDir, {recursive: true})
