@@ -5,14 +5,18 @@ import path, { join } from "path";
 import { mkdir, writeFile } from "fs/promises";
 
 export async function POST(request: NextRequest) {
+
     // Récupère les données du formulaire envoyé
     const data = await request.formData();
+
     // Récupère le fichier envoyé sous le nom "file"
     const file: File | null = data.get("file") as unknown as File;
+
     if (!file) {
         // Si aucun fichier n'est envoyé, retourne une erreur
         return NextResponse.json({ succes: false });
     }
+    
     // Convertit le fichier en buffer (pour l'enregistrement sur le disque)
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
