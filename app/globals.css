@@ -18,6 +18,12 @@ html[data-theme="night"] {
 html[data-theme="night"] h3 {
   color: #000 !important;
 }
+html[data-theme="night"] select,
+html[data-theme="night"] select option,
+html[data-theme="night"] input[type="number"],
+html[data-theme="night"] input[type="file"] {
+  color: #000 !important;
+}
 html[data-theme="night"] ::placeholder {
   color: #000 !important;
   opacity: 1;
