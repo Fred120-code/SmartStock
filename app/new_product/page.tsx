@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper";
 import { useUser } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
 import { FormDataType } from "@/types";
+import { readCeategory } from "../actions";
 
 const page = () => {
   //importation de l'email de l'utilisateur
@@ -28,6 +29,30 @@ const page = () => {
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  useEffect(() => {
+    const fetchCateogories = async () => {
+      if (email) {
+        const data = await readCeategory(email);
+        if (data) {
+          setCategories(data);
+        }
+      }
+      try {
+      } catch (error) {
+        console.error("Erreur lors du chargement des categories");
+      }
+    };
+    fetchCateogories();
+  }, [email]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
+    if (selectedFile) {
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+    }
   };
 
   return (
@@ -67,6 +92,8 @@ const page = () => {
               <select
                 className="select selec-bordered"
                 value={formData.categoryId}
+                onChange={handleChange}
+                name="categoryId"
               >
                 <option value="">Selectionner une categorie</option>
                 {categories.map((category) => (
@@ -75,6 +102,28 @@ const page = () => {
                   </option>
                 ))}
               </select>
+
+              <select
+                className="select selec-bordered"
+                value={formData.unit}
+                onChange={handleChange}
+                name="unit"
+              >
+                <option value="">Selectionner l'unité</option>
+                <option value="g">Gramme</option>
+                <option value="kg">Kilogramme</option>
+                <option value="l">Litre</option>
+                <option value="m">Metre</option>
+                <option value="h">Heure</option>
+                <option value="pcs">Piece</option>
+              </select>
+
+              <input
+                type="file"
+                accept="image/"
+                className="file-input file-input-bordered w-full"
+                onChange={handleFileChange}
+              />
             </div>
           </section>
         </div>
