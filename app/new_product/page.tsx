@@ -7,6 +7,8 @@ import { FormDataType } from "@/types";
 import { readCeategory } from "../actions";
 import { FileImage } from "lucide-react";
 import ProductImage from "../components/ProductImage";
+import { toast } from "react-toastify";
+import { error } from "console";
 
 const page = () => {
   //importation de l'email de l'utilisateur
@@ -57,6 +59,17 @@ const page = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    if (!file) {
+      toast.error("Veuillez selectionner une image");
+    }
+    try{  
+      const imagedata = new FormData() 
+    }catch(error){
+      console.error(error)
+      toast.error("Erreur");
+    }
+  };
   return (
     <Wrapper>
       <div className="flex justify-between items-center">
@@ -127,26 +140,29 @@ const page = () => {
                 onChange={handleFileChange}
               />
 
-              <button className="btn btn-primary">Creer le produit</button>
+              <button className="btn btn-primary" onClick={handleSubmit}>
+                Creer le produit
+              </button>
             </div>
 
             <div className="md:ml-10 md:w-[300px] mt-4 md:mt-0 border-2 border-primary md:h-[300px] p-5 flex justify-center items-center rounded-3xl">
-                {
-                  previewUrl && previewUrl !== "" ? (
-                    <div>
-                          <ProductImage 
-                            src={previewUrl}
-                            alt="preview"
-                            heightClass="h-40"
-                            widhtClass="w-40"
-                          />
-                    </div>
-                  ): (
-                    <div>
-                        <FileImage strokeWidth={1} className="h-10 w-10 text-primary"/>
-                    </div>
-                  )
-                }
+              {previewUrl && previewUrl !== "" ? (
+                <div>
+                  <ProductImage
+                    src={previewUrl}
+                    alt="preview"
+                    heightClass="h-40"
+                    widhtClass="w-40"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <FileImage
+                    strokeWidth={1}
+                    className="h-10 w-10 text-primary"
+                  />
+                </div>
+              )}
             </div>
           </section>
         </div>
