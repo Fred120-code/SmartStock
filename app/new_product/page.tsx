@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
 import { FormDataType } from "@/types";
 import { readCeategory } from "../actions";
+import { FileImage } from "lucide-react";
 
 const page = () => {
   //importation de l'email de l'utilisateur
@@ -124,6 +125,22 @@ const page = () => {
                 className="file-input file-input-bordered w-full"
                 onChange={handleFileChange}
               />
+
+              <button className="btn btn-primary">Creer le produit</button>
+            </div>
+
+            <div className="md:ml-10 md:w-[300px] mt-4 md:mt-0 border-2 border-primary md:h-[300px] p-5 flex justify-center items-center rounded-3xl">
+                {
+                  previewUrl && previewUrl !== "" ? (
+                    <div>
+                          eddgf
+                    </div>
+                  ): (
+                    <div>
+                        <FileImage strokeWidth={1} className="h-10 w-10 text-primary"/>
+                    </div>
+                  )
+                }
             </div>
           </section>
         </div>
