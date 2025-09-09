@@ -1,19 +1,26 @@
+// Ce composant gère l'affichage, la création, la modification et la suppression des catégories
 "use client";
 import React, { useEffect, useState } from "react";
-import Wrapper from "../components/Wrapper";
-import CategorieModal from "../components/CategorieModal";
-import { useUser } from "@clerk/nextjs";
-import { createCategory, deleteCategory, readCeategory, updateCategory } from "../actions";
-import { toast } from "react-toastify";
-import { Category } from "@prisma/client";
-import EmphyState from "../components/EmphyState";
-import { Pencil, Recycle, Trash } from "lucide-react";
+import Wrapper from "../components/Wrapper"; // Composant d'habillage général
+import CategorieModal from "../components/CategorieModal"; // Modal pour créer/modifier une catégorie
+import { useUser } from "@clerk/nextjs"; // Hook pour récupérer l'utilisateur connecté
+import {
+  createCategory, // Action pour créer une catégorie
+  deleteCategory, // Action pour supprimer une catégorie
+  readCeategory,  // Action pour lire les catégories
+  updateCategory, // Action pour mettre à jour une catégorie
+} from "../actions";
+import { toast } from "react-toastify"; // Pour afficher des notifications
+import { Category } from "@prisma/client"; // Type de catégorie
+import EmphyState from "../components/EmphyState"; // Composant d'état vide
+import { Pencil, Trash } from "lucide-react"; // Icônes
 
 const page = () => {
-  //importation de l'email de l'utilisateur
+  // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
+  // États pour gérer l'édition, les champs du formulaire, le chargement, le mode édition et la liste des catégories
   const [editCategoryId, setEditCategoryId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -21,7 +28,7 @@ const page = () => {
   const [editMode, setEditMode] = useState(false);
   const [categorie, setCategorie] = useState<Category[]>([]);
 
-  //permet d'appeler une categorie
+  // Charge les catégories de l'utilisateur connecté
   const loadCategory = async () => {
     if (email) {
       const data = await readCeategory(email);
@@ -31,80 +38,81 @@ const page = () => {
     }
   };
 
+  // Recharge les catégories à chaque changement d'email (connexion/déconnexion)
   useEffect(() => {
     loadCategory();
   }, [email]);
 
-  //permet d'ouvrir le Modal
+  // Ouvre la modal pour créer une nouvelle catégorie
   const openCreateModal = () => {
     setName("");
     setDescription("");
     setEditMode(false);
-
     (
       document.getElementById("Category_modal") as HTMLDialogElement
     )?.showModal();
   };
 
-  //permet de fermer le Modal
+  // Ferme la modal de création/édition
   const closeCreateModal = () => {
     setName("");
     setDescription("");
     setEditMode(false);
-
     (document.getElementById("Category_modal") as HTMLDialogElement)?.close();
   };
 
+  // Gère la création d'une nouvelle catégorie
   const handleCreateCategory = async () => {
     setLoading(true);
     if (email) {
       await createCategory(name, email, description);
     }
-    
     await loadCategory();
     closeCreateModal();
     setLoading(false);
     toast.success("Categories creer avec succes");
   };
 
+  // Gère la mise à jour d'une catégorie existante
   const handleUpdateCategory = async () => {
     if (!editCategoryId) return;
     setLoading(true);
     if (email) {
       await updateCategory(editCategoryId, email, name, description);
     }
-
     await loadCategory();
     closeCreateModal();
     setLoading(false);
     toast.success("Categories mise à jour avec succes.");
   };
 
-  //afficher le Modal de modification
+  // Ouvre la modal en mode édition et pré-remplit les champs avec la catégorie sélectionnée
   const openEditModal = (categorie: Category) => {
     setName(categorie.name);
-    setDescription(categorie.description || ""); 
+    setDescription(categorie.description || "");
     setEditMode(true);
     setEditCategoryId(categorie.id);
-
     (
       document.getElementById("Category_modal") as HTMLDialogElement
     )?.showModal();
   };
 
-  //supprimer une category
-   const handleDeleteCategory = async (categorieId: string) => {
-    const confirDelet = confirm( "si vous suprimez cette categorie, tout les produits associés seront egalement supprimés, etes-vous d'accord ?")
-    if(!confirDelet) return;
-
-    await deleteCategory(categorieId, email)
+  // Supprime une catégorie après confirmation
+  const handleDeleteCategory = async (categorieId: string) => {
+    const confirDelet = confirm(
+      "si vous suprimez cette categorie, tout les produits associés seront egalement supprimés, etes-vous d'accord ?"
+    );
+    if (!confirDelet) return;
+    await deleteCategory(categorieId, email);
     await loadCategory();
-    toast.success("Categories supprimée avec succes")
+    toast.success("Categories supprimée avec succes");
   };
 
+  // Rendu du composant principal
   return (
     <Wrapper>
       <div>
+        {/* Bouton pour ouvrir la modal de création */}
         <div className="mb-4">
           <button
             className="btn btn-primary rounded-sm"
@@ -114,6 +122,7 @@ const page = () => {
           </button>
         </div>
 
+        {/* Liste des catégories ou état vide */}
         {categorie.length > 0 ? (
           <div>
             {categorie.map((categorie) => (
@@ -126,29 +135,33 @@ const page = () => {
                   <div className="text-sm">{categorie.description}</div>
                 </div>
                 <div className="flex gap-2">
+                  {/* Bouton d'édition */}
                   <button
                     className="btn btn-sm rounded-sm"
                     onClick={() => openEditModal(categorie)}
                   >
-                    <Pencil className="w-4 h-4"/>
+                    <Pencil className="w-4 h-4" />
                   </button>
+                  {/* Bouton de suppression */}
                   <button
                     className="btn btn-sm btn-error rounded-sm"
                     onClick={() => handleDeleteCategory(categorie.id)}
                   >
-                    <Trash className="w-4 h-4"/>
+                    <Trash className="w-4 h-4" />
                   </button>
                 </div>
               </div>
             ))}
           </div>
         ) : (
+          // Affiche un état vide si aucune catégorie n'est disponible
           <EmphyState
             message={"Aucune categorie disponibe"}
             IconComponent="Group"
           />
         )}
       </div>
+      {/* Modal de création/édition de catégorie */}
       <CategorieModal
         name={name}
         description={description}
