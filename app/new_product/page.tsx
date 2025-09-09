@@ -4,26 +4,30 @@ import Wrapper from "../components/Wrapper";
 import { useUser } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
 import { FormDataType } from "@/types";
-import { readCeategory } from "../actions";
+import { createProduct, readCeategory } from "../actions";
 import { FileImage } from "lucide-react";
 import ProductImage from "../components/ProductImage";
 import { toast } from "react-toastify";
-import { error } from "console";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   //importation de l'email de l'utilisateur
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
+  //pour le nivagation
+  const router = useRouter()
+
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [formData, setFormData] = useState<FormDataType>({
+  const [ formData, setFormData] = useState<FormDataType>({
     name: "",
     description: "",
     price: 0,
     categoryId: "",
     unit: "",
+    imageUrl: ""
   });
 
   const handleChange = (
@@ -62,9 +66,28 @@ const page = () => {
   const handleSubmit = async () => {
     if (!file) {
       toast.error("Veuillez selectionner une image");
+      return;
     }
     try{  
       const imagedata = new FormData() 
+      imagedata.append("file", file)
+      const res = await fetch("api/uploads", {
+        method: "POST",
+        body: imagedata
+      })
+
+      const data =await res.json()
+      if(!data.succes){
+        throw new Error("Erreur lors de l'upload de l'image")
+      }else{
+        formData.imageUrl = data.path
+        await createProduct(
+          formData, email
+        )
+        toast.success("Produit creer avec succes")
+        router.push("/products")
+      }
+
     }catch(error){
       console.error(error)
       toast.error("Erreur");
