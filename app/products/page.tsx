@@ -37,34 +37,33 @@ const page = () => {
     }
   }, [email]);
 
-  const handleDeletProduct = async (product: Product)=>{
-    const confirmDelet = confirm("Voulez-vous supprimer ce produit ????????")
-    if(!confirmDelet) return;
+  const handleDeletProduct = async (product: Product) => {
+    const confirmDelet = confirm("Voulez-vous supprimer ce produit ????????");
+    if (!confirmDelet) return;
 
     try {
-        if(product.imageUrl){
-            const resDelete = await fetch ("/api/uploads", {
-                method: "DELETE",
-                body: JSON.stringify({path: product.imageUrl}),
-                headers: {'content-type': 'application/json'}
-            })
+      if (product.imageUrl) {
+        const resDelete = await fetch("/api/uploads", {
+          method: "DELETE",
+          body: JSON.stringify({ path: product.imageUrl }),
+          headers: { "content-type": "application/json" },
+        });
 
-            const dataDelete = await resDelete.json()
-            if(!dataDelete.succes){
-                throw new Error("Erreur lors de le suppression de l'image")
-            }else{
-                if (email) {
-                    await deleteProduct(product.id, email)
-                    await fetchProduct()
-                    toast.success("produit supprimé avec succes")
-                }
-            }
+        const dataDelete = await resDelete.json();
+        if (!dataDelete.succes) {
+          throw new Error("Erreur lors de le suppression de l'image");
+        } else {
+          if (email) {
+            await deleteProduct(product.id, email);
+            await fetchProduct();
+            toast.success("produit supprimé avec succes");
+          }
         }
-        
+      }
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
-  }
+  };
 
   return (
     <div>
@@ -108,15 +107,21 @@ const page = () => {
                     <td>{product.price} FCFA</td>
                     <td>
                       {product.quantity} {product.unit}
-                    </td>{" "}
+                    </td>
                     <td>{product.categoryName}</td>
                     <td className="felx flex-col gap-4">
-                        <Link className="btn btn-xs w-fit btn-primary" href={`/update-product/${product.id}`}>
+                      <Link
+                        className="btn btn-xs w-fit btn-primary"
+                        href={`/update-product/${product.id}`}
+                      >
                         Modifier
-                        </Link>
-                        <button className="btn btn-xs w-fit" onClick={()=>handleDeletProduct(product)}>
-                            <Trash className="w-4 h-4"/>
-                        </button>
+                      </Link>
+                      <button
+                        className="btn btn-xs w-fit"
+                        onClick={() => handleDeletProduct(product)}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}
