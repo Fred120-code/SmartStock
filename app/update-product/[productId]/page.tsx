@@ -19,7 +19,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     price: 0,
     categoryId: "",
     imageUrl: "",
-    categoryName:""
+    categoryName: "",
   });
 
   const fetchProduct = async () => {
@@ -36,7 +36,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
             price: fetchedproduct.price,
             categoryId: fetchedproduct.categoryId,
             imageUrl: fetchedproduct.imageUrl,
-            categoryName: fetchedproduct.categoryName
+            categoryName: fetchedproduct.categoryName,
           });
         }
       }
@@ -59,6 +59,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  
   // Gère la sélection d'un fichier image et crée un aperçu
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
@@ -110,7 +111,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   onChange={handleChange}
                 />
 
-                 {/* Champ categories */}
+                {/* Champ categories */}
                 <div className="text-sm font-semibold mb-2">Categorie</div>
 
                 <input
@@ -133,12 +134,10 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   name="unit"
                 >
                   <option value="">Selectionner l'unité</option>
-                  <option value="g">Gramme</option>
-                  <option value="kg">Kilogramme</option>
-                  <option value="l">Litre</option>
-                  <option value="m">Metre</option>
-                  <option value="h">Heure</option>
-                  <option value="pcs">Piece</option>
+                  <option value="G">Gramme</option>
+                  <option value="Kg">Kilogramme</option>
+                  <option value="L">Litre</option>
+                  <option value="M">Metre</option>
                 </select>
 
                 {/* Champ pour uploader une image */}
@@ -150,6 +149,11 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   className="file-input file-input-bordered w-full"
                   onChange={handleFileChange}
                 />
+
+                {/* Bouton de soumission */}
+                <button className="btn btn-primary mt-3" type="submit">
+                  Modifier
+                </button>
               </form>
             </div>
           </div>

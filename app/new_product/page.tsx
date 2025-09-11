@@ -98,6 +98,7 @@ const page = () => {
       toast.error("Erreur");
     }
   };
+  
   // Rendu du composant principal
   return (
     <Wrapper>
