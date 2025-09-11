@@ -4,11 +4,12 @@ import React, { useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper";
 import { useUser } from "@clerk/nextjs";
 import { Product } from "@/types";
-import { readProduct } from "../actions";
+import { deleteProduct, readProduct } from "../actions";
 import EmphyState from "../components/EmphyState";
 import ProductImage from "../components/ProductImage";
 import Link from "next/link";
 import { Trash } from "lucide-react";
+import { toast } from "react-toastify";
 
 const page = () => {
   // Récupère l'utilisateur connecté et son email
@@ -44,8 +45,20 @@ const page = () => {
         if(product.imageUrl){
             const resDelete = await fetch ("/api/uploads", {
                 method: "DELETE",
-                body: JSON.stringify({path: product.imageUrl})
+                body: JSON.stringify({path: product.imageUrl}),
+                headers: {'content-type': 'application/json'}
             })
+
+            const dataDelete = await resDelete.json()
+            if(!dataDelete.succes){
+                throw new Error("Erreur lors de le suppression de l'image")
+            }else{
+                if (email) {
+                    await deleteProduct(product.id, email)
+                    await fetchProduct()
+                    toast.success("produit supprimé avec succes")
+                }
+            }
         }
         
     } catch (error) {
