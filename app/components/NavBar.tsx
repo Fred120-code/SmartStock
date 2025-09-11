@@ -1,6 +1,8 @@
+"use client"
+
 // Composant de barre de navigation principal de l'application
 import { UserButton, useUser } from "@clerk/nextjs";
-import { Blocks, ListTodo, Menu, ShoppingCart, X } from "lucide-react";
+import { Blocks, ListTodo, Menu, PackagePlus, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -30,10 +32,10 @@ const NavBar = () => {
     {
       href: "/new_product",
       label: "Nouveau produit",
-      icon: ShoppingCart,
+      icon: PackagePlus,
     },  
     {
-      href: "/product",
+      href: "/products",
       label: "produit",
       icon: ShoppingCart,
     },
