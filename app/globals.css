@@ -15,13 +15,16 @@ html[data-theme="night"] {
   background-color: #0f172a; /* gris foncé/bleu nuit */
   color: #ffffff;
 }
+
 html[data-theme="night"] h3 {
   color: #000 !important;
 }
 html[data-theme="night"] select,
+html[data-theme="night"] textarea,
 html[data-theme="night"] select option,
 html[data-theme="night"] input[type="number"],
-html[data-theme="night"] input[type="file"] {
+html[data-theme="night"] input[type="file"],
+html[data-theme="night"] input[type="text"] {
   color: #000 !important;
 }
 html[data-theme="night"] ::placeholder {

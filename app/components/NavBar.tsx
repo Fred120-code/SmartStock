@@ -29,7 +29,12 @@ const NavBar = () => {
     },
     {
       href: "/new_product",
-      label: "Nouveau produits",
+      label: "Nouveau produit",
+      icon: ShoppingCart,
+    },  
+    {
+      href: "/product",
+      label: "produit",
       icon: ShoppingCart,
     },
   ];
