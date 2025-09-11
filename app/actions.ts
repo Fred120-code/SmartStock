@@ -129,7 +129,7 @@ export async function readCeategory(
 
 export async function createProduct(formData: FormDataType, email: string) {
   try {
-    const { name, description, price, imageUrl, categoryId, unit } = formData;
+    const { name, description, price, imageUrl, categoryId, unit, quantity } = formData;
 
     if (!email || !price || !categoryId) {
       throw new Error("l'email, le nom, le prix et la category sont requis.");
@@ -152,6 +152,7 @@ export async function createProduct(formData: FormDataType, email: string) {
         categoryId,
         unit: safeUnit,
         associationId: association.id,
+        quantity: Number(quantity),
       },
     });
   } catch (error) {

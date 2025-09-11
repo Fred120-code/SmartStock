@@ -20,6 +20,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     categoryId: "",
     imageUrl: "",
     categoryName: "",
+    quantity: 0
   });
 
   const fetchProduct = async () => {
@@ -37,6 +38,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
             categoryId: fetchedproduct.categoryId,
             imageUrl: fetchedproduct.imageUrl,
             categoryName: fetchedproduct.categoryName,
+            quantity: fetchedproduct.quantity
           });
         }
       }
@@ -59,7 +61,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  
+
   // Gère la sélection d'un fichier image et crée un aperçu
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
@@ -108,6 +110,19 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   placeholder="Prix"
                   className="input input-bordered w-full"
                   value={formData.price}
+                  onChange={handleChange}
+                />
+
+
+                {/* Champ quantité */}
+                <div className="text-sm font-semibold mb-2">Quantité</div>
+
+                <input
+                  type="number"
+                  name="quantity"
+                  placeholder="Quantité"
+                  className="input input-bordered w-full"
+                  value={formData.quantity}
                   onChange={handleChange}
                 />
 

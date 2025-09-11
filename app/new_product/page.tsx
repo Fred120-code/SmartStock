@@ -30,6 +30,7 @@ const page = () => {
     categoryId: "",
     unit: "",
     imageUrl: "",
+    quantity: 0
   });
 
   // Gère le changement des champs du formulaire
@@ -98,7 +99,7 @@ const page = () => {
       toast.error("Erreur");
     }
   };
-  
+
   // Rendu du composant principal
   return (
     <Wrapper>
@@ -136,6 +137,16 @@ const page = () => {
                 placeholder="Prix"
                 className="input input-bordered w-full"
                 value={formData.price}
+                onChange={handleChange}
+              />
+
+              {/* Champ quantité */}
+              <input
+                type="number"
+                name="quantity"
+                placeholder="Quantité"
+                className="input input-bordered w-full"
+                value={formData.quantity}
                 onChange={handleChange}
               />
 
