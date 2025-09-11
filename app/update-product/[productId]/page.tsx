@@ -19,6 +19,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     price: 0,
     categoryId: "",
     imageUrl: "",
+    categoryName:""
   });
 
   const fetchProduct = async () => {
@@ -35,6 +36,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
             price: fetchedproduct.price,
             categoryId: fetchedproduct.categoryId,
             imageUrl: fetchedproduct.imageUrl,
+            categoryName: fetchedproduct.categoryName
           });
         }
       }
@@ -107,6 +109,20 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   value={formData.price}
                   onChange={handleChange}
                 />
+
+                 {/* Champ categories */}
+                <div className="text-sm font-semibold mb-2">Categorie</div>
+
+                <input
+                  type="text"
+                  name="category"
+                  placeholder="Selectionner une category"
+                  className="input input-bordered w-full"
+                  value={formData.categoryName}
+                  onChange={handleChange}
+                  disabled
+                />
+
                 {/* Sélecteur d'unité */}
                 <div className="text-sm font-semibold mb-2">Unité</div>
 
@@ -126,7 +142,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                 </select>
 
                 {/* Champ pour uploader une image */}
-                <div className="text-sm font-semibold mb-2">Ilage</div>
+                <div className="text-sm font-semibold mb-2">Image</div>
 
                 <input
                   type="file"
