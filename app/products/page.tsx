@@ -7,6 +7,8 @@ import { Product } from "@/types";
 import { readProduct } from "../actions";
 import EmphyState from "../components/EmphyState";
 import ProductImage from "../components/ProductImage";
+import Link from "next/link";
+import { Trash } from "lucide-react";
 
 const page = () => {
   // Récupère l'utilisateur connecté et son email
@@ -34,6 +36,23 @@ const page = () => {
     }
   }, [email]);
 
+  const handleDeletProduct = async (product: Product)=>{
+    const confirmDelet = confirm("Voulez-vous supprimer ce produit ????????")
+    if(!confirmDelet) return;
+
+    try {
+        if(product.imageUrl){
+            const resDelete = await fetch ("/api/uploads", {
+                method: "DELETE",
+                body: JSON.stringify({path: product.imageUrl})
+            })
+        }
+        
+    } catch (error) {
+        console.error(error);
+    }
+  }
+
   return (
     <div>
       <Wrapper>
@@ -46,7 +65,7 @@ const page = () => {
               />
             </div>
           ) : (
-            <div className="table">
+            <table className="table">
               <thead>
                 <tr>
                   <th></th>
@@ -55,8 +74,8 @@ const page = () => {
                   <th>Description</th>
                   <th>Prix</th>
                   <th>Quantité</th>
-                  <th>Actions</th>
                   <th>Categorie</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,10 +90,25 @@ const page = () => {
                         widhtClass="w-12"
                       />
                     </td>
+                    <td>{product.name}</td>
+                    <td>{product.description}</td>
+                    <td>{product.price} FCFA</td>
+                    <td>
+                      {product.quantity} {product.unit}
+                    </td>{" "}
+                    <td>{product.categoryName}</td>
+                    <td className="felx flex-col gap-4">
+                        <Link className="btn btn-xs w-fit btn-primary" href={`/update-product/${product.id}`}>
+                        Modifier
+                        </Link>
+                        <button className="btn btn-xs w-fit" onClick={()=>handleDeletProduct(product)}>
+                            <Trash className="w-4 h-4"/>
+                        </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
-            </div>
+            </table>
           )}
         </div>
       </Wrapper>

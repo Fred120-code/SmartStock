@@ -2,10 +2,10 @@
 import { existsSync } from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import path, { join } from "path";
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, unlink, writeFile } from "fs/promises";
 
 export async function POST(request: NextRequest) {
-
+  try {
     // Récupère les données du formulaire envoyé
     const data = await request.formData();
 
@@ -13,10 +13,10 @@ export async function POST(request: NextRequest) {
     const file: File | null = data.get("file") as unknown as File;
 
     if (!file) {
-        // Si aucun fichier n'est envoyé, retourne une erreur
-        return NextResponse.json({ succes: false });
+      // Si aucun fichier n'est envoyé, retourne une erreur
+      return NextResponse.json({ succes: false });
     }
-    
+
     // Convertit le fichier en buffer (pour l'enregistrement sur le disque)
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -26,12 +26,12 @@ export async function POST(request: NextRequest) {
 
     // Crée le dossier s'il n'existe pas
     if (!existsSync(uploaDir)) {
-        await mkdir(uploaDir, { recursive: true });
+      await mkdir(uploaDir, { recursive: true });
     }
 
     // Génère un nom de fichier unique avec l'extension d'origine
-    const ext = file.name.split('.').pop();
-    const UniqueName = crypto.randomUUID() + '.' + ext;
+    const ext = file.name.split(".").pop();
+    const UniqueName = crypto.randomUUID() + "." + ext;
     const filePath = join(uploaDir, UniqueName);
     const publicPath = `/uploads/${UniqueName}`;
 
@@ -40,4 +40,33 @@ export async function POST(request: NextRequest) {
 
     // Retourne le chemin public du fichier uploadé
     return NextResponse.json({ succes: true, path: publicPath });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { path } = await request.json();
+    if (!path) {
+      return NextResponse.json(
+        { succes: false, message: "chemin invalide" },
+        { status: 400 }
+      );
+    }
+    const filePath = join(process.cwd(), "public", path);
+    if (!existsSync(filePath)) {
+      return NextResponse.json(
+        { succes: false, message: "fichier non trouvé" },
+        { status: 400 }
+      );
+    }
+    await unlink(filePath);
+     return NextResponse.json(
+        { succes: true, message: "fichier trouvé" },
+        { status: 400 }
+      );
+  } catch (error) {
+    console.error(error);
+  }
 }
