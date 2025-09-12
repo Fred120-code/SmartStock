@@ -238,8 +238,8 @@ export async function createProduct(formData: FormDataType, email: string) {
  */
 export async function updateProduct(formData: FormDataType, email: string) {
   try {
-    // Déstructure les champs nécessaires depuis le formulaire
-    const { id, name, description, price, imageUrl } = formData;
+    // Déstructure tous les champs nécessaires depuis le formulaire
+    const { id, name, description, price, imageUrl, quantity, categoryId, unit } = formData;
 
     // Vérifie la présence des champs obligatoires
     if (!email || !price || !id) {
@@ -253,7 +253,7 @@ export async function updateProduct(formData: FormDataType, email: string) {
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
-    // Met à jour le produit dans la base de données avec les nouvelles informations
+    // Met à jour le produit dans la base de données avec toutes les nouvelles informations
     await prisma.product.update({
       where: {
         id: id, // ID du produit à mettre à jour
@@ -264,6 +264,9 @@ export async function updateProduct(formData: FormDataType, email: string) {
         description, // Nouvelle description
         price: Number(price), // Nouveau prix converti en nombre
         imageUrl: imageUrl, // Nouvelle image (ou inchangée)
+        quantity: Number(quantity), // Nouvelle quantité
+        categoryId, // Nouvelle catégorie
+        unit: unit || "", // Nouvelle unité (ou vide)
       },
     });
   } catch (error) {

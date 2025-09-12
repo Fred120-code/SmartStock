@@ -79,7 +79,7 @@ const page = () => {
       // Upload de l'image
       const imagedata = new FormData();
       imagedata.append("file", file);
-      const res = await fetch("api/uploads", {
+      const res = await fetch("api/upload", {
         method: "POST",
         body: imagedata,
       });

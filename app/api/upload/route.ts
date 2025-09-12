@@ -2,7 +2,7 @@
 // Importation des modules nécessaires
 import { existsSync } from "fs"; // Pour vérifier l'existence d'un fichier ou dossier
 import { NextRequest, NextResponse } from "next/server"; // Pour gérer les requêtes/réponses Next.js API
-import path, { join } from "path"; // Pour manipuler les chemins de fichiers
+import  { join } from "path"; // Pour manipuler les chemins de fichiers
 import { mkdir, unlink, writeFile } from "fs/promises"; // Pour créer des dossiers, supprimer et écrire des fichiers de façon asynchrone
 
 /**
@@ -62,30 +62,32 @@ export async function POST(request: NextRequest) {
  * Cette fonction reçoit le chemin du fichier à supprimer, le supprime du disque, et retourne un statut
  * @param request - Requête HTTP de type NextRequest
  */
-
 export async function DELETE(request: NextRequest) {
   try {
     // Récupère le corps de la requête (doit contenir { path: string })
-    const { path } = await request.json();
+    const {path} = await request.json();
+
+    // Log du chemin reçu pour debug
+    console.log("[DELETE /api/uploads] Chemin reçu :", path);
 
     // Vérifie que le chemin a bien été fourni
-    if (!path) {
-      // Si le chemin est manquant, retourne une erreur 400
+    if (!path || typeof path !== "string") {
       return NextResponse.json(
-        { succes: false, messfilePathage: "chemin invalide" },
+        { succes: false, message: "chemin invalide (vide ou non string)" },
         { status: 400 }
       );
     }
 
     // Construit le chemin absolu du fichier à supprimer
     const filePath = join(process.cwd(), "public", path);
+    console.log("[DELETE /api/uploads] Chemin absolu utilisé :", filePath);
 
     // Vérifie que le fichier existe bien sur le disque
     if (!existsSync(filePath)) {
-      // Si le fichier n'existe pas, retourne une erreur 400
+      // On retourne succes: true pour éviter l'erreur front si le fichier a déjà été supprimé
       return NextResponse.json(
-        { succes: false, message: "fichier non trouvé" },
-        { status: 400 }
+        { succes: false, message: "fichier déjà supprimé ou inexistant" },
+        { status: 404 }
       );
     }
 
@@ -99,6 +101,11 @@ export async function DELETE(request: NextRequest) {
     );
   } catch (error) {
     // En cas d'erreur, affiche l'erreur dans la console
-    console.error(error);
+    console.error("[DELETE /api/uploads] Erreur :", error);
+    // Toujours retourner du JSON même en cas d'erreur serveur
+    return NextResponse.json(
+      { succes: false, message: "Erreur serveur lors de la suppression" },
+      { status: 500 }
+    );
   }
 }

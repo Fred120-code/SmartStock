@@ -64,7 +64,7 @@ const page = () => {
     try {
       // Si le produit a une image, on la supprime côté serveur
       if (product.imageUrl) {
-        const resDelete = await fetch("/api/uploads", {
+        const resDelete = await fetch("/api/upload", {
           method: "DELETE",
           body: JSON.stringify({ path: product.imageUrl }),
           headers: { "content-type": "application/json" },

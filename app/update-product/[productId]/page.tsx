@@ -2,17 +2,12 @@
 import { useUser } from "@clerk/nextjs";
 import { FormDataType, Product } from "@/types";
 import React, { useEffect, useState } from "react";
-import {
-  createProduct,
-  deleteProduct,
-  readProductById,
-  updateProduct,
-} from "@/app/actions";
+import { readProductById, updateProduct } from "@/app/actions";
 import Wrapper from "@/app/components/Wrapper";
 import ProductImage from "@/app/components/ProductImage";
 import { FileImage } from "lucide-react";
 import { toast } from "react-toastify";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 const page = ({ params }: { params: Promise<{ productId: string }> }) => {
   // Récupère l'utilisateur connecté et son email
@@ -31,6 +26,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     categoryName: "",
     quantity: 0,
   });
+  const router = useRouter();
 
   const fetchProduct = async () => {
     try {
@@ -83,40 +79,54 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     let imageUrl = formData?.imageUrl;
     e.preventDefault();
-
     try {
       if (file) {
-        const resDelete = await fetch("/api/uploads", {
+        // Supprime l'ancienne image si elle existe
+        const resDelete = await fetch("/api/upload", {
           method: "DELETE",
           body: JSON.stringify({ path: formData.imageUrl }),
           headers: { "content-type": "application/json" },
         });
-
-        const dataDelete = await resDelete.json();
+        let dataDelete = { succes: true };
+        try {
+          dataDelete = await resDelete.json();
+        } catch (err) {
+          // Si la réponse n'est pas du JSON, on ignore (l'API est censée toujours renvoyer du JSON maintenant)
+        }
         if (!dataDelete.succes) {
           throw new Error("Erreur lors de le suppression de l'image");
-        } else {
-          // Upload de l'image
-          const imagedata = new FormData();
-          imagedata.append("file", file);
-          const res = await fetch("api/uploads", {
-            method: "POST",
-            body: imagedata,
-          });
-
-          const data = await res.json();
-          if (!data.succes) {
-            throw new Error("Erreur lors de l'upload de l'image");
-          }
-          imageUrl = data.path;
-          formData.imageUrl = imageUrl;
-
-          await updateProduct(formData, email);
-          toast.success("Product mis à jour avec succès");
         }
+        // Upload de la nouvelle image
+        const imagedata = new FormData();
+        imagedata.append("file", file);
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: imagedata,
+        });
+        let data: { succes: boolean; path?: string } = { succes: false };
+        try {
+          data = await res.json();
+        } catch (err) {
+          // Si la réponse n'est pas du JSON, on lève une erreur
+          throw new Error("Réponse inattendue lors de l'upload de l'image");
+        }
+        if (!data.succes) {
+          throw new Error("Erreur lors de l'upload de l'image");
+        }
+        imageUrl = data.path || "";
+        formData.imageUrl = imageUrl;
+        await updateProduct(formData, email);
+        toast.success("Product mis à jour avec succès");
+        router.push("/products");
+      } else {
+        // Si pas de nouvelle image, on met à jour le produit avec les autres champs
+        await updateProduct(formData, email);
+        toast.success("Product mis à jour avec succès");
+        router.push("/products");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      toast.error(error.message);
     }
   };
 
