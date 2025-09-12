@@ -2,8 +2,17 @@
 import { useUser } from "@clerk/nextjs";
 import { FormDataType, Product } from "@/types";
 import React, { useEffect, useState } from "react";
-import { readProductById } from "@/app/actions";
+import {
+  createProduct,
+  deleteProduct,
+  readProductById,
+  updateProduct,
+} from "@/app/actions";
 import Wrapper from "@/app/components/Wrapper";
+import ProductImage from "@/app/components/ProductImage";
+import { FileImage } from "lucide-react";
+import { toast } from "react-toastify";
+import router from "next/router";
 
 const page = ({ params }: { params: Promise<{ productId: string }> }) => {
   // Récupère l'utilisateur connecté et son email
@@ -20,7 +29,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     categoryId: "",
     imageUrl: "",
     categoryName: "",
-    quantity: 0
+    quantity: 0,
   });
 
   const fetchProduct = async () => {
@@ -38,7 +47,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
             categoryId: fetchedproduct.categoryId,
             imageUrl: fetchedproduct.imageUrl,
             categoryName: fetchedproduct.categoryName,
-            quantity: fetchedproduct.quantity
+            quantity: fetchedproduct.quantity,
           });
         }
       }
@@ -71,6 +80,46 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    let imageUrl = formData?.imageUrl;
+    e.preventDefault();
+
+    try {
+      if (file) {
+        const resDelete = await fetch("/api/uploads", {
+          method: "DELETE",
+          body: JSON.stringify({ path: formData.imageUrl }),
+          headers: { "content-type": "application/json" },
+        });
+
+        const dataDelete = await resDelete.json();
+        if (!dataDelete.succes) {
+          throw new Error("Erreur lors de le suppression de l'image");
+        } else {
+          // Upload de l'image
+          const imagedata = new FormData();
+          imagedata.append("file", file);
+          const res = await fetch("api/uploads", {
+            method: "POST",
+            body: imagedata,
+          });
+
+          const data = await res.json();
+          if (!data.succes) {
+            throw new Error("Erreur lors de l'upload de l'image");
+          }
+          imageUrl = data.path;
+          formData.imageUrl = imageUrl;
+
+          await updateProduct(formData, email);
+          toast.success("Product mis à jour avec succès");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Wrapper>
       <div>
@@ -79,7 +128,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
             {/* Titre de la page */}
             <h1 className="font-bold text-2xl mb-4">modifier le produit</h1>
             <div className="flex md:flex-row flex-col md:items-center">
-              <form className="space-y-2">
+              <form className="space-y-2" onSubmit={handleSubmit}>
                 <div className="text-sm font-semibold mb-2">Nom</div>
                 {/* Champ nom */}
                 <input
@@ -112,7 +161,6 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   value={formData.price}
                   onChange={handleChange}
                 />
-
 
                 {/* Champ quantité */}
                 <div className="text-sm font-semibold mb-2">Quantité</div>
@@ -170,6 +218,29 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   Modifier
                 </button>
               </form>
+
+              <div className="flex md:flex-col md:ml-4 mt-4 md:mt-0">
+                {/* Aperçu de l'image sélectionnée ou icône par défaut */}
+                <div className="md:ml-10 md:w-[300px] mt-4 md:mt-0 border-2 border-primary md:h-[300px] p-5 flex justify-center items-center rounded-3xl">
+                  {previewUrl && previewUrl !== "" ? (
+                    <div>
+                      <ProductImage
+                        src={previewUrl}
+                        alt="preview"
+                        heightClass="h-40"
+                        widhtClass="w-40"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <FileImage
+                        strokeWidth={1}
+                        className="h-10 w-10 text-primary"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         ) : (
