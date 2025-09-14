@@ -91,6 +91,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
         try {
           dataDelete = await resDelete.json();
         } catch (err) {
+          console.error(err)
           // Si la réponse n'est pas du JSON, on ignore (l'API est censée toujours renvoyer du JSON maintenant)
         }
         if (!dataDelete.succes) {
@@ -103,6 +104,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
           method: "POST",
           body: imagedata,
         });
+        
         let data: { succes: boolean; path?: string } = { succes: false };
         try {
           data = await res.json();

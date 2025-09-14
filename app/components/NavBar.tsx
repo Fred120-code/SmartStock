@@ -2,11 +2,12 @@
 
 // Composant de barre de navigation principal de l'application
 import { UserButton, useUser } from "@clerk/nextjs";
-import { Blocks, ListTodo, Menu, PackagePlus, ShoppingCart, X } from "lucide-react";
+import { Blocks, ListTodo, Menu, PackagePlus, ShoppingCart, Warehouse, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { checkAndAddAssociation } from "../actions";
+import Stock from "./Stock";
 
 const NavBar = () => {
   // Récupération de l'utilisateur connecté
@@ -66,6 +67,13 @@ const NavBar = () => {
             </Link>
           );
         })}
+      <button
+        className="btn btn-sm"
+        onClick={() => (document.getElementById("my_modal_stock") as HTMLDialogElement).showModal()}
+      >
+        <Warehouse className="h-4 w-4"/>
+        Alimenter le stock
+      </button>
       </>
     );
   };
@@ -115,6 +123,8 @@ const NavBar = () => {
         </div>
         {renderLinks()}
       </div>
+
+      <Stock/>
     </div>
   );
 };
