@@ -390,3 +390,49 @@ export async function readProductById(
     console.error("Error creating category:", error);
   }
 }
+
+export async function replenishStockWithTransaction(productId:string, quantity:number, email:string) {
+  try {
+     if (quantity <= 0) {
+      throw new Error("la quantité à ajouter doit etre > à 0");
+    }
+
+    // Vérifie la présence de l'email
+    if (!email) {
+      throw new Error("l'email est requis.");
+    }
+
+    // Récupère l'association liée à l'email
+    const association = await getAssociation(email);
+
+    // Si aucune association n'est trouvée, on lève une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+
+    // Recherche le produit par son ID et l'association, inclut la catégorie associée
+    await prisma.product.update({
+      where: {
+        id: productId, // ID du produit recherché
+        associationId: association.id, // Sécurité : doit appartenir à l'association
+      },
+     data: {
+      quantity :{
+        increment: quantity
+      }
+     }
+    });
+
+    await prisma.transaction.create({
+      data: {
+        type: "IN",
+        quantity: quantity,
+        productId: productId,
+        associationId: association.id
+      }
+    })
+  } catch (error) {
+    // Log l'erreur en cas d'échec de la récupération
+    console.error("Error creating category:", error);
+  }
+}
