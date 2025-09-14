@@ -193,7 +193,8 @@ export async function readCeategory(
 export async function createProduct(formData: FormDataType, email: string) {
   try {
     // Déstructure les champs nécessaires depuis le formulaire
-    const { name, description, price, imageUrl, categoryId, unit, quantity } = formData;
+    const { name, description, price, imageUrl, categoryId, unit, quantity } =
+      formData;
 
     // Vérifie la présence des champs obligatoires
     if (!email || !price || !categoryId) {
@@ -239,7 +240,16 @@ export async function createProduct(formData: FormDataType, email: string) {
 export async function updateProduct(formData: FormDataType, email: string) {
   try {
     // Déstructure tous les champs nécessaires depuis le formulaire
-    const { id, name, description, price, imageUrl, quantity, categoryId, unit } = formData;
+    const {
+      id,
+      name,
+      description,
+      price,
+      imageUrl,
+      quantity,
+      categoryId,
+      unit,
+    } = formData;
 
     // Vérifie la présence des champs obligatoires
     if (!email || !price || !id) {
@@ -391,10 +401,21 @@ export async function readProductById(
   }
 }
 
-export async function replenishStockWithTransaction(productId:string, quantity:number, email:string) {
+/**
+ * Ajoute du stock à un produit et enregistre cette opération comme une transaction d'entrée ("IN").
+ * @param productId - L'identifiant du produit à réapprovisionner
+ * @param quantity - La quantité à ajouter au stock (doit être > 0)
+ * @param email - L'email de l'utilisateur/association (sert à vérifier l'appartenance)
+ */
+export async function replenishStockWithTransaction(
+  productId: string,
+  quantity: number,
+  email: string
+) {
   try {
-     if (quantity <= 0) {
-      throw new Error("la quantité à ajouter doit etre > à 0");
+    // Vérifie que la quantité à ajouter est strictement positive
+    if (quantity <= 0) {
+      throw new Error("la quantité à ajouter doit être > à 0");
     }
 
     // Vérifie la présence de l'email
@@ -410,29 +431,30 @@ export async function replenishStockWithTransaction(productId:string, quantity:n
       throw new Error("Aucune association trouvée avec cet email.");
     }
 
-    // Recherche le produit par son ID et l'association, inclut la catégorie associée
+    // Incrémente la quantité du produit dans la base de données
     await prisma.product.update({
       where: {
-        id: productId, // ID du produit recherché
-        associationId: association.id, // Sécurité : doit appartenir à l'association
+        id: productId, // ID du produit à mettre à jour
+        associationId: association.id, // Sécurité : le produit doit appartenir à l'association
       },
-     data: {
-      quantity :{
-        increment: quantity
-      }
-     }
+      data: {
+        quantity: {
+          increment: quantity, // Ajoute la quantité spécifiée au stock existant
+        },
+      },
     });
 
+    // Enregistre la transaction d'entrée dans l'historique
     await prisma.transaction.create({
       data: {
-        type: "IN",
-        quantity: quantity,
-        productId: productId,
-        associationId: association.id
-      }
-    })
+        type: "IN", // Type d'opération : entrée de stock
+        quantity: quantity, // Quantité ajoutée
+        productId: productId, // Produit concerné
+        associationId: association.id, // Association concernée
+      },
+    });
   } catch (error) {
-    // Log l'erreur en cas d'échec de la récupération
+    // Log l'erreur en cas d'échec
     console.error("Error creating category:", error);
   }
 }
