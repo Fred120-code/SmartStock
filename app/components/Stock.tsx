@@ -2,6 +2,7 @@ import { Product } from "@/types";
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
 import { readProduct } from "../actions";
+import ProductComponent from "./ProductComponent";
 
 const Stock = () => {
   // Récupère l'utilisateur connecté et son email
@@ -40,16 +41,16 @@ const Stock = () => {
     }
   }, [email]);
 
-  const handleProductChange = (productId: string) =>{
-    const product = products.find((p)=> p.id === productId)
-    setSelectedProduct(product || null)
-    setSelectedProductId(productId)
-  }
+  const handleProductChange = (productId: string) => {
+    const product = products.find((p) => p.id === productId);
+    setSelectedProduct(product || null);
+    setSelectedProductId(productId);
+  };
 
   return (
     <div>
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
-      
+
       <dialog id="my_modal_stock" className="modal">
         <div className="modal-box">
           <form method="dialog">
@@ -59,25 +60,41 @@ const Stock = () => {
             </button>
           </form>
           <h3 className="font-bold text-lg">Gestion des stock!</h3>
-          <p className="py-4">Ajouter des quantité aux produits dans votres stock</p>
+          <p className="py-4">
+            Ajouter des quantité aux produits dans votres stock
+          </p>
           <form className="space-y-2">
             <label className="block">Selectionner un produit</label>
-            <select value={selectedProductId}
-                    className="select select-bordered w-full"
-                    required
-                    onChange={(e)=> handleProductChange(e.target.value)}
+            <select
+              value={selectedProductId}
+              className="select select-bordered w-full"
+              required
+              onChange={(e) => handleProductChange(e.target.value)}
             >
-                <option value="">Selectionner un produit</option>
-                {
-                    products.map((product) => (
-                        <option value={product.id}
-                                key={product.id}
-                        >
-                                {product.name} - {product.categoryName}
-                        </option>
-                    ))
-                }
+              <option value="">Selectionner un produit</option>
+              {products.map((product) => (
+                <option value={product.id} key={product.id}>
+                  {product.name} - {product.categoryName}
+                </option>
+              ))}
             </select>
+
+            {selectedProduct && <ProductComponent product={selectedProduct} />}
+
+            <label className="block">Quantité à ajouter</label>
+            <input type="number"
+            placeholder="Quantité"
+            value={quantity}
+            required
+            onChange={(e)=> setQuantity(Number(e.target.value))}
+            className="input input-bordered" />
+
+            <button
+                type="submit"
+                className="btn btn-primary w-fit"
+            >
+                Ajouter au stock
+            </button>
           </form>
         </div>
       </dialog>
