@@ -40,6 +40,12 @@ const Stock = () => {
     }
   }, [email]);
 
+  const handleProductChange = (productId: string) =>{
+    const product = products.find((p)=> p.id === productId)
+    setSelectedProduct(product || null)
+    setSelectedProductId(productId)
+  }
+
   return (
     <div>
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
@@ -59,6 +65,7 @@ const Stock = () => {
             <select value={selectedProductId}
                     className="select select-bordered w-full"
                     required
+                    onChange={(e)=> handleProductChange(e.target.value)}
             >
                 <option value="">Selectionner un produit</option>
                 {
