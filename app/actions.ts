@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { FormDataType, Product } from "@/types";
+import { FormDataType, OrderItem, Product } from "@/types";
 import { PricingTable } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
 
@@ -453,6 +453,70 @@ export async function replenishStockWithTransaction(
         associationId: association.id, // Association concernée
       },
     });
+  } catch (error) {
+    // Log l'erreur en cas d'échec
+    console.error("Error creating category:", error);
+  }
+}
+
+export async function deductStockWithTransaction(orderItem: OrderItem[], email: string){
+  try {
+
+    // Vérifie la présence de l'email
+    if (!email) {
+      throw new Error("l'email est requis.");
+    }
+
+    // Récupère l'association liée à l'email
+    const association = await getAssociation(email);
+
+    // Si aucune association n'est trouvée, on lève une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+
+    for (let item of orderItem) {
+      const product = await prisma.product.findUnique({
+        where:{id: item.productId}
+      })
+
+      if (!product) {
+        throw new Error(`Proudit avec l'Id ${item.productId} est inexistant`)
+      }
+      if (item.quantity <= 0) {
+        throw new Error(`la quantité de ${product.name} doit etre > à 0`)
+      }
+
+      if (product.quantity < item.quantity) {
+        throw new Error(`Le produit "${product.name}" est insufisant. demandé : ${item.quantity}, disponible: ${product.quantity}/ ${product.unit}`)
+      }
+    }
+    await prisma.$transaction
+
+    // // Incrémente la quantité du produit dans la base de données
+    // await prisma.product.update({
+    //   where: {
+    //     id: productId, // ID du produit à mettre à jour
+    //     associationId: association.id, // Sécurité : le produit doit appartenir à l'association
+    //   },
+    //   data: {
+    //     quantity: {
+    //       increment: quantity, // Ajoute la quantité spécifiée au stock existant
+    //     },
+    //   },
+    // });
+
+    // // Enregistre la transaction d'entrée dans l'historique
+    // await prisma.transaction.create({
+    //   data: {
+    //     type: "IN", // Type d'opération : entrée de stock
+    //     quantity: quantity, // Quantité ajoutée
+    //     productId: productId, // Produit concerné
+    //     associationId: association.id, // Association concernée
+    //   },
+    // });
+
+
   } catch (error) {
     // Log l'erreur en cas d'échec
     console.error("Error creating category:", error);

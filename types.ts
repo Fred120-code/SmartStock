@@ -10,8 +10,17 @@ export interface FormDataType {
   imageUrl?: string;
 }
 
-import { Product as PrismaProduct} from "@prisma/client"
+import { Product as PrismaProduct } from "@prisma/client"
 
 export interface Product extends PrismaProduct{
     categoryName: string;
+}
+
+export interface OrderItem {
+  productId: string;
+  quantity: number;
+  unit: string;
+  imageUrl: string;
+  name: string;
+  availableQuantity: number;
 }
