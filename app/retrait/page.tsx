@@ -82,12 +82,13 @@ const page = () => {
         ];
       }
 
-      setSelectedProductId((prevSelected) => 
-        prevSelected.includes(product.id) ? prevSelected 
-      :  [...prevSelected,product.id]
-      )
+      setSelectedProductId((prevSelected) =>
+        prevSelected.includes(product.id)
+          ? prevSelected
+          : [...prevSelected, product.id]
+      );
 
-      return updateOrder
+      return updateOrder;
     });
   };
 
@@ -109,7 +110,7 @@ const page = () => {
                   product={product}
                   key={index}
                   add={true}
-                  handleAddToCard= {handleAddToCard}
+                  handleAddToCard={handleAddToCard}
                 />
               ))
             ) : (
