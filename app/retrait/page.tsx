@@ -14,7 +14,7 @@ const page = () => {
 
   // State pour stocker la liste des produits récupérés
   const [products, setProducts] = useState<Product[]>([]);
-
+ 
   const [order, setOrder] = useState<OrderItem[]>([]);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -46,9 +46,7 @@ const page = () => {
   }, [email]);
 
   const filteredProduct = products
-    .filter((product) =>
-      product.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
-    )
+    .filter((product) => product.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
     .filter((product) => !selectedProductId.includes(product.id))
     .slice(0, 10);
 
@@ -95,7 +93,7 @@ const page = () => {
   return (
     <Wrapper>
       <div className="flex md:flex-row flex-col-reverse">
-        <div className="md:w-1/3">
+        <div className="w-1/2">
           <input
             type="text"
             placeholder="rechercher un produit"
@@ -103,7 +101,7 @@ const page = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <div className="space-y-4">
+          <div className="space-y-4 w-full ">
             {filteredProduct.length > 0 ? (
               filteredProduct.map((product, index) => (
                 <ProductComponent

@@ -496,7 +496,7 @@ export async function deductStockWithTransaction(
       }
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => { //$transaction est une action atomique
       for (const item of orderItem) {
         await tx.product.update({
           where: {
@@ -513,8 +513,8 @@ export async function deductStockWithTransaction(
         // Enregistre la transaction d'entrée dans l'historique
         await prisma.transaction.create({
           data: {
-            type: "OUT", // Type d'opération : entrée de stock
-            quantity: item.quantity, // Quantité ajoutée
+            type: "OUT", // Type d'opération : sortie de stock
+            quantity: item.quantity, // Quantité retiré
             productId: item.productId, // Produit concerné
             associationId: association.id, // Association concernée
           },
