@@ -30,7 +30,7 @@ const page = () => {
     categoryId: "",
     unit: "",
     imageUrl: "",
-    quantity: 0
+    quantity: 0,
   });
 
   // Gère le changement des champs du formulaire

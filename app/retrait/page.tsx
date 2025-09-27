@@ -6,6 +6,8 @@ import { readProduct } from "../actions";
 import Wrapper from "../components/Wrapper";
 import ProductComponent from "../components/ProductComponent";
 import EmphyState from "../components/EmphyState";
+import ProductImage from "../components/ProductImage";
+import { Trash } from "lucide-react";
 
 const page = () => {
   // Récupère l'utilisateur connecté et son email
@@ -14,7 +16,7 @@ const page = () => {
 
   // State pour stocker la liste des produits récupérés
   const [products, setProducts] = useState<Product[]>([]);
- 
+
   const [order, setOrder] = useState<OrderItem[]>([]);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -42,16 +44,18 @@ const page = () => {
   useEffect(() => {
     if (email) {
       fetchProduct();
-    }handleAddToCard
+    }
+    handleAddToCard;
   }, [email]);
 
   //permet de rechercher un produit specifique en flitrant la liste de produit
   const filteredProduct = products
-    .filter((product) => product.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
+    .filter((product) =>
+      product.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
+    )
     .filter((product) => !selectedProductId.includes(product.id))
     .slice(0, 10);
 
-    
   const handleAddToCard = (product: Product) => {
     setOrder((preOrder) => {
       const existingProduct = preOrder.find(
@@ -92,6 +96,26 @@ const page = () => {
     });
   };
 
+  const handleQuantityChange = (productId: string, quantity: number) => {
+    setOrder((preOrder) =>
+      preOrder.map((item) =>
+        item.productId === productId ? { ...item, quantity } : item
+      )
+    );
+  };
+
+  const handleRemoveFronCard = (productId: string) => {
+    setOrder((preOrder) => {
+      const updatedOrder = preOrder.filter(
+        (item) => item.productId !== productId
+      );
+      setSelectedProductId((prevSelectedProductIds) =>
+        prevSelectedProductIds.filter((id) => id !== productId)
+      );
+
+      return updatedOrder;
+    });
+  };
   return (
     <Wrapper>
       <div className="flex md:flex-row flex-col-reverse">
@@ -122,6 +146,69 @@ const page = () => {
               </div>
             )}
           </div>
+        </div>
+        <div className="md:w-2/3 p-3 md:mb-0 md:ml-4 mb-4 h-fit border-2 border-base-200 rounded-3xl overflow-x-auto">
+          {order.length > 0 ? (
+            <div>
+              <table className="table w-full scroll-auto">
+                <thead>
+                  <tr>
+                    <th>Images</th>
+                    <th>Nom</th>
+                    <th>Quantité</th>
+                    <th>Unité</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.map((item) => (
+                    <tr key={item.productId}>
+                      <td>
+                        <ProductImage
+                          src={item.imageUrl}
+                          alt={item.imageUrl}
+                          heightClass="h-12"
+                          widhtClass="w-12"
+                        />
+                      </td>
+                      <td>{item.name}</td>
+                      <td>
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          min={1}
+                          max={item.availableQuantity}
+                          className="input input-bordered w-full mb-4"
+                          onChange={(e) =>
+                            handleQuantityChange(
+                              item.productId,
+                              Number(e.target.value)
+                            )
+                          }
+                        />
+                      </td>
+                      <td>{item.unit}</td>
+                      <td>
+                        <button
+                          className="btn btn-sm btn-error"
+                          onClick={() => handleRemoveFronCard(item.productId)}
+                        >
+                          <Trash className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div>
+              <EmphyState
+                message="Aucun produit pour le moment"
+                IconComponent="PackageSearch"
+              />
+            </div>
+          )}
         </div>
       </div>
     </Wrapper>
