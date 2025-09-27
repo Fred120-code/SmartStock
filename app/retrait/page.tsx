@@ -42,14 +42,16 @@ const page = () => {
   useEffect(() => {
     if (email) {
       fetchProduct();
-    }
+    }handleAddToCard
   }, [email]);
 
+  //permet de rechercher un produit specifique en flitrant la liste de produit
   const filteredProduct = products
     .filter((product) => product.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
     .filter((product) => !selectedProductId.includes(product.id))
     .slice(0, 10);
 
+    
   const handleAddToCard = (product: Product) => {
     setOrder((preOrder) => {
       const existingProduct = preOrder.find(

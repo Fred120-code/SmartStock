@@ -35,22 +35,21 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
       <div className="flex flex-col ml-4 space-y-2">
         <h2 className="text-lg font-bold">{product.name}</h2>
         <div className=" badge badge-warning badge-soft">
-            {product.categoryName}
+          {product.categoryName}
         </div>
         <div className=" badge badge-warning badge-soft">
-            {product.quantity}{product.unit}
+          {product.quantity}
+          {product.unit}
         </div>
 
-        {
-            add && handleAddToCard && (
-                <button
-                    onClick={()=> handleAddToCard(product)}
-                    className="btn btn-sm btn-circle btn-primary"
-                >
-                    <Plus className="h-4 w-4"/>
-                </button>
-            )
-        }
+        {add && handleAddToCard && (
+          <button
+            onClick={() => handleAddToCard(product)}
+            className="btn btn-sm btn-circle btn-primary"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </div>
   );
