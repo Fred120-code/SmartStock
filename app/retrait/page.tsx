@@ -2,12 +2,13 @@
 import { OrderItem, Product } from "@/types";
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
-import { readProduct } from "../actions";
+import { deductStockWithTransaction, readProduct } from "../actions";
 import Wrapper from "../components/Wrapper";
 import ProductComponent from "../components/ProductComponent";
 import EmphyState from "../components/EmphyState";
 import ProductImage from "../components/ProductImage";
 import { Trash } from "lucide-react";
+import { toast } from "react-toastify";
 
 const page = () => {
   // Récupère l'utilisateur connecté et son email
@@ -104,6 +105,7 @@ const page = () => {
     );
   };
 
+  //cette fonction permet de retirer un produit du panier
   const handleRemoveFronCard = (productId: string) => {
     setOrder((preOrder) => {
       const updatedOrder = preOrder.filter(
@@ -116,6 +118,29 @@ const page = () => {
       return updatedOrder;
     });
   };
+
+  const handleSUbmit = async ()=> {
+   try {
+    if(order.length == 0){
+      toast.error("Veuillez ajouter un produit à la commande")
+      return
+    }
+
+    const response = await deductStockWithTransaction(order, email)
+    if(response?.success){
+      toast.success("Retrait effectuer avec succes")
+      setOrder([])
+      setSelectedProductId([])
+      fetchProduct()
+    }else{
+      toast.error(`${response?.message}`)
+    }
+   } catch (error) {
+    console.error(error)
+   }
+  }
+
+
   return (
     <Wrapper>
       <div className="flex md:flex-row flex-col-reverse">
@@ -200,6 +225,9 @@ const page = () => {
                   ))}
                 </tbody>
               </table>
+              <button className="btn btn-primary mt-4 w-fit" onClick={()=> handleSUbmit()}>
+                Confirmer
+              </button>
             </div>
           ) : (
             <div>

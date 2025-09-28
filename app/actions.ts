@@ -528,7 +528,7 @@ export async function deductStockWithTransaction(
         // Important : on utilise tx pour l'update mais ici on utilise prisma.transaction
         // (non-transactionnel) — idéalement il faudrait aussi utiliser tx.transaction.create
         // pour garantir l'atomicité complète. Ceci est une remarque d'amélioration.
-        await prisma.transaction.create({
+        await tx.transaction.create({
           data: {
             type: "OUT", // Type d'opération : sortie de stock
             quantity: item.quantity, // Quantité retirée
@@ -544,5 +544,7 @@ export async function deductStockWithTransaction(
   } catch (error) {
     // Log l'erreur en cas d'échec 
     console.error(error);
+        return { success: false, message: error };
+
   }
 }
