@@ -500,7 +500,7 @@ export async function deductStockWithTransaction(
       // Vérifie qu'il y a suffisamment de stock pour satisfaire la demande
       if (product.quantity < item.quantity) {
         throw new Error(
-          `Le produit "${product.name}" est insuffisant. demandé : ${item.quantity}, disponible: ${product.quantity} ${product.unit}`
+          `Le produit "${product.name}" est insuffisant. Demande : ${item.quantity} ${item.unit}, Disponible: ${product.quantity} ${product.unit}`
         );
       }
     }

@@ -46,7 +46,6 @@ const page = () => {
     if (email) {
       fetchProduct();
     }
-    handleAddToCard;
   }, [email]);
 
   //permet de rechercher un produit specifique en flitrant la liste de produit
@@ -57,6 +56,7 @@ const page = () => {
     .filter((product) => !selectedProductId.includes(product.id))
     .slice(0, 10);
 
+  //Ajouter un produit au panier
   const handleAddToCard = (product: Product) => {
     setOrder((preOrder) => {
       const existingProduct = preOrder.find(
@@ -97,6 +97,7 @@ const page = () => {
     });
   };
 
+  //Changer la quantité d’un produit
   const handleQuantityChange = (productId: string, quantity: number) => {
     setOrder((preOrder) =>
       preOrder.map((item) =>
@@ -119,27 +120,27 @@ const page = () => {
     });
   };
 
-  const handleSUbmit = async ()=> {
-   try {
-    if(order.length == 0){
-      toast.error("Veuillez ajouter un produit à la commande")
-      return
-    }
+  //Soumettre la commande
+  const handleSUbmit = async () => {
+    try {
+      if (order.length == 0) {
+        toast.error("Veuillez ajouter un produit à la commande");
+        return;
+      }
 
-    const response = await deductStockWithTransaction(order, email)
-    if(response?.success){
-      toast.success("Retrait effectuer avec succes")
-      setOrder([])
-      setSelectedProductId([])
-      fetchProduct()
-    }else{
-      toast.error(`${response?.message}`)
+      const response = await deductStockWithTransaction(order, email);
+      if (response?.success) {
+        toast.success("Retrait effectuer avec succes");
+        setOrder([]);
+        setSelectedProductId([]);
+        fetchProduct();
+      } else {
+        toast.error(`${response?.message}`);
+      }
+    } catch (error) {
+      console.error(error);
     }
-   } catch (error) {
-    console.error(error)
-   }
-  }
-
+  };
 
   return (
     <Wrapper>
@@ -225,7 +226,10 @@ const page = () => {
                   ))}
                 </tbody>
               </table>
-              <button className="btn btn-primary mt-4 w-fit" onClick={()=> handleSUbmit()}>
+              <button
+                className="btn btn-primary mt-4 w-fit"
+                onClick={() => handleSUbmit()}
+              >
                 Confirmer
               </button>
             </div>
