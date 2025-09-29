@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { FormDataType, OrderItem, Product } from "@/types";
+import { FormDataType, OrderItem, Product, Transaction } from "@/types";
 import { PricingTable } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
 
@@ -487,7 +487,7 @@ export async function deductStockWithTransaction(
         where: { id: item.productId },
       });
 
-      // Si le produit n'existe pas, on lève une erreur claire 
+      // Si le produit n'existe pas, on lève une erreur claire
       if (!product) {
         throw new Error(`Produit avec l'Id ${item.productId} est inexistant`);
       }
@@ -542,9 +542,60 @@ export async function deductStockWithTransaction(
     // Retourne un objet simple signalant le succès
     return { success: true };
   } catch (error) {
-    // Log l'erreur en cas d'échec 
+    // Log l'erreur en cas d'échec
     console.error(error);
-        return { success: false, message: error };
+    return { success: false, message: error };
+  }
+}
 
+export async function getTransaction(
+  email: string,
+  limit?: number
+): Promise<Transaction[]> {
+  try {
+    // Vérifie la présence de l'email
+    if (!email) {
+      throw new Error("l'email est requis.");
+    }
+
+    // Récupère l'association liée à l'email
+    const association = await getAssociation(email);
+
+    // Si aucune association n'est trouvée, on lève une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+
+    // Recherche le produit par son ID et l'association, inclut la catégorie associée
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        associationId: association.id, // Sécurité : doit appartenir à l'association
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: limit,
+      include: {
+        product: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
+
+    // Retourne le produit enrichi du nom de la catégorie (categoryName)
+    return transactions.map((tx) => ({
+      ...tx,
+      categoryName: tx.product.category.name,
+      productName: tx.product.name,
+      imageUrl: tx.product.imageUrl,
+      price: tx.product.price,
+      unit: tx.product.unit 
+    }));
+  } catch (error) {
+    // Log l'erreur en cas d'échec de la récupération
+    console.error("Error creating category:", error);
+    return []
   }
 }

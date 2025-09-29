@@ -1,7 +1,5 @@
-
 // Page d'affichage de la liste des produits pour l'utilisateur connecté
 "use client";
-
 
 // Import des hooks et composants nécessaires
 import React, { useEffect, useState } from "react";
@@ -14,7 +12,6 @@ import ProductImage from "../components/ProductImage"; // Affichage stylisé de 
 import Link from "next/link"; // Pour la navigation vers la page de modification
 import { Trash } from "lucide-react"; // Icône de poubelle
 import { toast } from "react-toastify"; // Notifications toast
-
 
 const page = () => {
   // Récupère l'utilisateur connecté via Clerk et son email principal

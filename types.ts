@@ -1,3 +1,6 @@
+import { Transaction as PrismaTransaction } from "@prisma/client";
+import { Product as PrismaProduct } from "@prisma/client";
+
 export interface FormDataType {
   id?: string;
   name: string;
@@ -10,10 +13,8 @@ export interface FormDataType {
   imageUrl?: string;
 }
 
-import { Product as PrismaProduct } from "@prisma/client"
-
-export interface Product extends PrismaProduct{
-    categoryName: string;
+export interface Product extends PrismaProduct {
+  categoryName: string;
 }
 
 export interface OrderItem {
@@ -23,4 +24,12 @@ export interface OrderItem {
   imageUrl: string;
   name: string;
   availableQuantity: number;
+}
+
+export interface Transaction extends PrismaTransaction {
+  categoryName: string;
+  productName: string;
+  imageUrl: string;
+  price: number;
+  unit: string;
 }

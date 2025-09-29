@@ -2,7 +2,7 @@
 
 // Composant de barre de navigation principal de l'application
 import { UserButton, useUser } from "@clerk/nextjs";
-import { Blocks, ListTodo, Menu, Package, PackageMinus, PackagePlus, ShoppingCart, Warehouse, X } from "lucide-react";
+import { ArrowLeftRight, Blocks, ListTodo, Menu, Package, PackageMinus, PackagePlus, ShoppingCart, Warehouse, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -34,16 +34,21 @@ const NavBar = () => {
       href: "/new_product",
       label: "Nouveau produit",
       icon: Package,
-    },  
+    },
     {
       href: "/products",
-      label: "produit",
+      label: "Produit",
       icon: ShoppingCart,
     },
     {
       href: "/retrait",
-      label: "retrait",
+      label: "Retrait",
       icon: PackageMinus,
+    },
+    {
+      href: "/transactions",
+      label: "Transactions",
+      icon: ArrowLeftRight,
     },
   ];
 
