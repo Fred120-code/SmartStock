@@ -5,7 +5,10 @@ import React, { useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper";
 import { Transaction, Product } from "@/types";
 import { getTransaction, readProduct } from "../actions";
+import EmphyState from "../components/EmphyState";
+import TransactionComponent from "../components/TransactionComponent";
 
+const ITEMS_PER_PAGE = 5;
 const page = () => {
   // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
@@ -13,6 +16,14 @@ const page = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [transaction, setTransaction] = useState<Transaction[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
+  const [fileteredTransaction, setFileteredTransaction] = useState<
+    Transaction[]
+  >([]);
+  const [currenPage, setCurrentPage] = useState<number>(1);
+
   /**
    * Fonction pour charger les produits de l'utilisateur connecté
    * Appelle l'action readProduct côté serveur, puis met à jour le state
@@ -42,12 +53,99 @@ const page = () => {
     }
   }, [email]);
 
+  useEffect(() => {
+    let filtered = transaction;
+
+    if (selectedProduct) {
+      filtered = filtered.filter((tx) => tx.productId === selectedProduct.id);
+    }
+
+    if (dateFrom) {
+      filtered = filtered.filter(
+        (tx) => new Date(tx.createdAt) <= new Date(dateFrom)
+      );
+    }
+
+    if (dateFrom) {
+      filtered = filtered.filter(
+        (tx) => new Date(tx.createdAt) <= new Date(dateTo)
+      );
+    }
+
+    setFileteredTransaction(filtered);
+    setCurrentPage(1);
+  }, [selectedProduct, dateFrom, dateTo, transaction]);
+
+  const totalPages = Math.ceil(fileteredTransaction.length / ITEMS_PER_PAGE);
+  const startIndex = (currenPage - 1) * ITEMS_PER_PAGE;
+  const currentTransaction = fileteredTransaction.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
   return (
     <Wrapper>
       <div className="flex justify-between items-center flex-wrap gap-4">
-        <div>
-        
+        <div className="flex md:justify-between w-full mb-4 space-x-2 md:space-x-0">
+          <div>
+            <select
+              name=""
+              id=""
+              className="select select-bordered"
+              value={selectedProduct?.id || ""}
+              onChange={(e) => {
+                const product =
+                  products.find((p) => p.id === e.target.value) || null;
+                setSelectedProduct(product);
+              }}
+            >
+              <option>Tout les produits</option>
+              {products.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              placeholder="date de début"
+              className="input input-bordered"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              onFocus={(e) => (e.target.type = "date")}
+              onBlur={(e) => {
+                if (!e.target.value) e.target.type = "text";
+              }}
+            />
+
+            <input
+              type="text"
+              placeholder="date de fin"
+              className="input input-bordered"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              onFocus={(e) => (e.target.type = "date")}
+              onBlur={(e) => {
+                if (!e.target.value) e.target.type = "text";
+              }}
+            />
+          </div>
         </div>
+
+        {transaction.length == 0 ? (
+          <div>
+            <EmphyState
+              message="Aucun transaction pour le moment"
+              IconComponent="ScanLine"
+            />
+          </div>
+        ) : (
+          <div>{currentTransaction.map((tx) => (
+            <TransactionComponent key={tx.id} tx={tx}/>
+          ))}</div>
+        )}
       </div>
     </Wrapper>
   );
