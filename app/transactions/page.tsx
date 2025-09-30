@@ -147,7 +147,7 @@ const page = () => {
         </div>
 
         {transaction.length == 0 ? (
-          <div className="flex justify-center items-center">
+          <div className="ml-17 mt-20">
             <EmphyState
               message="Aucun transaction pour le moment"
               IconComponent="ScanLine"

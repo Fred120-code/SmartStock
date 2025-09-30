@@ -145,7 +145,7 @@ const page = () => {
   return (
     <Wrapper>
       <div className="flex md:flex-row flex-col-reverse">
-        <div className="w-1/2">
+        <div className="w-full">
           <input
             type="text"
             placeholder="rechercher un produit"

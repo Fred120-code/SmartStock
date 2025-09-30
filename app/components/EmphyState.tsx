@@ -13,13 +13,13 @@ const EmphyState: FC<EmphyStateProps> = ({ IconComponent, message }) => {
   // Sélection dynamique de l'icône à partir de lucide-react
   const SelectedIcon = icons[IconComponent];
   return (
-    <div className="w-full h-full my-20 flex justify-center items-center flex-col">
+    <div className="w-full h-full  mt-10 flex justify-center items-center flex-col">
       {/* Affichage de l'icône */}
       <div>
         <SelectedIcon strokeWidth={1} className="w-30 h-30 text-primary" />
       </div>
       {/* Affichage du message */}
-      <p className="text-sm ">{message}</p>
+      <p className="text-sm font-bold">{message}</p>
     </div>
   );
 };
