@@ -1,5 +1,6 @@
 import React from 'react'
 import { Transaction } from '@/types'
+import ProductImage from './ProductImage';
 
 const TransactionComponent = ({tx}: {tx:Transaction}) => {
     const formatData =new Date(tx.createdAt).toLocaleDateString("fr-FR", {
@@ -9,10 +10,47 @@ const TransactionComponent = ({tx}: {tx:Transaction}) => {
     })
 
   return (
-    <div>
-        dev
+    <div className="p-4 border-2 border-base-200 rounded-2xl flex items-center">
+      <div>
+        {tx.imageUrl && (
+          <ProductImage
+            src={tx.imageUrl}
+            alt={tx.imageUrl}
+            heightClass="h-12"
+            widhtClass="w-12"
+          />
+        )}
+      </div>
+      <div className="ml-4 flex justify-between w-full items-center">
+        <div>
+          <p className="font-semibold">{tx.productName}</p>
+          <div className="badge badge-outline badge-primary mt-2">
+            {tx.categoryName}
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-right">
+            <div>
+              {tx.type == "IN" ? (
+                <div>
+                  <span className="text-success font-bold text-xl capitalize">
+                    +{tx.quantity} {tx.unit}
+                  </span>
+                </div>
+              ) : (
+                <div>
+                  <span className="text-error font-bold text-xl capitalize">
+                    -{tx.quantity} {tx.unit}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className='text-xs'>{formatData}</div>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
 export default TransactionComponent
