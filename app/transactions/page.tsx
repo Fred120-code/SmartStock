@@ -7,6 +7,7 @@ import { Transaction, Product } from "@/types";
 import { getTransaction, readProduct } from "../actions";
 import EmphyState from "../components/EmphyState";
 import TransactionComponent from "../components/TransactionComponent";
+import { ListRestart } from "lucide-react";
 
 const ITEMS_PER_PAGE = 5;
 const page = () => {
@@ -131,6 +132,17 @@ const page = () => {
                 if (!e.target.value) e.target.type = "text";
               }}
             />
+
+            <button
+              className="btn btn-primary"
+              onClick={()=> {
+                setSelectedProduct(null)
+                setDateFrom("")
+                setDateTo("")
+              }}
+            >
+              <ListRestart className="w-4 h-4"/>
+            </button>
           </div>
         </div>
 
@@ -146,6 +158,25 @@ const page = () => {
             {currentTransaction.map((tx) => (
               <TransactionComponent key={tx.id} tx={tx} />
             ))}
+          </div>
+        )}
+
+        {fileteredTransaction.length > ITEMS_PER_PAGE && (
+          <div className="join grid grid-cols-2">
+            <button
+              className="join-item btn btn-outline"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currenPage === 1}
+            >
+              «
+            </button>
+            <button
+              className="join-item btn btn-outline"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currenPage === totalPages}
+            >
+              »
+            </button>
           </div>
         )}
       </div>
