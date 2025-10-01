@@ -93,6 +93,7 @@ const CategoryChart = ({ email }: { email: string }) => {
 
   return (
     <div className="w-full border-2 border-base-200 m-4 p-4 rounded-3xl">
+      <h1 className="text-primary text-xl font-semibold mt-4 mb-4">Les meilleurs produits</h1>
       <h2 className="">{renderChart()}</h2>
     </div>
   );
