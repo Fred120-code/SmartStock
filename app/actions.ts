@@ -10,6 +10,7 @@ import {
 } from "@/types";
 import { PricingTable } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
+import { exportPages } from "next/dist/export/worker";
 
 // fonctions de traitement des associations
 
@@ -668,5 +669,50 @@ export async function getProductOverviewStats(
       totalTransaction: 0,
       stockValue: 0,
     };
+  }
+}
+
+export async function getProductCategoryDistribution(email: string) {
+  try {
+    // Vérifie la présence de l'email
+    if (!email) {
+      throw new Error("l'email est requis.");
+    }
+
+    // Récupère l'association liée à l'email
+    const association = await getAssociation(email);
+
+    // Si aucune association n'est trouvée, on lève une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+    const R = 5;
+
+    // Recherche le produit par son ID et l'association, inclut la catégorie associée
+    const categoryWithProductCount = await prisma.category.findMany({
+      where: {
+        associationId: association.id, // Sécurité : doit appartenir à l'association
+      },
+      include: {
+        products: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    const data = categoryWithProductCount
+      .map((category) => ({
+        name: category.name,
+        value: category.products.length,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, R);
+
+      return data
+  } catch (error) {
+    // Log l'erreur en cas d'échec de la récupération
+    console.error("Error creating category:", error);
   }
 }
