@@ -1,7 +1,13 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { FormDataType, OrderItem, Product, Transaction } from "@/types";
+import {
+  FormDataType,
+  OrderItem,
+  Product,
+  ProductOverviewStat,
+  Transaction,
+} from "@/types";
 import { PricingTable } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
 
@@ -591,11 +597,71 @@ export async function getTransaction(
       productName: tx.product.name,
       imageUrl: tx.product.imageUrl,
       price: tx.product.price,
-      unit: tx.product.unit 
+      unit: tx.product.unit,
     }));
   } catch (error) {
     // Log l'erreur en cas d'échec de la récupération
     console.error("Error creating category:", error);
-    return []
+    return [];
+  }
+}
+
+export async function getProductOverview(
+  email: string
+): Promise<ProductOverviewStat> {
+  try {
+    // Vérifie la présence de l'email
+    if (!email) {
+      throw new Error("l'email est requis.");
+    }
+
+    // Récupère l'association liée à l'email
+    const association = await getAssociation(email);
+
+    // Si aucune association n'est trouvée, on lève une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+
+    // Recherche le produit par son ID et l'association, inclut la catégorie associée
+    const products = await prisma.product.findMany({
+      where: {
+        associationId: association.id, // Sécurité : doit appartenir à l'association
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        associationId: association.id, // Sécurité : doit appartenir à l'association
+      },
+    });
+
+    const categorieSet = new Set(
+      products.map((product) => product.category.name)
+    );
+
+    const totalProducts = products.length;
+    const totalCategories = categorieSet.size;
+    const totalTransaction = transactions.length;
+    const stockValue = products.reduce((acc, product) => {
+      return acc + product.price * product.quantity;
+    }, 0);
+
+    return {
+      totalProducts,
+      totalCategories,
+      totalTransaction,
+      stockValue,
+    };
+  } catch (error) {
+    // Log l'erreur en cas d'échec de la récupération
+    console.error("Error creating category:", error);
+
   }
 }
