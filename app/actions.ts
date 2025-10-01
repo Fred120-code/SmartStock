@@ -6,6 +6,7 @@ import {
   OrderItem,
   Product,
   ProductOverviewStat,
+  StockSummary,
   Transaction,
 } from "@/types";
 import { PricingTable } from "@clerk/nextjs";
@@ -710,9 +711,63 @@ export async function getProductCategoryDistribution(email: string) {
       .sort((a, b) => b.value - a.value)
       .slice(0, R);
 
-      return data
+    return data;
   } catch (error) {
     // Log l'erreur en cas d'échec de la récupération
     console.error("Error creating category:", error);
+  }
+}
+
+export async function getStockSummary(email: string): Promise<StockSummary> {
+  try {
+    // Vérifie la présence de l'email
+    if (!email) {
+      throw new Error("l'email est requis.");
+    }
+
+    // Récupère l'association liée à l'email
+    const association = await getAssociation(email);
+
+    // Si aucune association n'est trouvée, on lève une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+    const R = 5;
+
+    // Recherche le produit par son ID et l'association, inclut la catégorie associée
+    const allProducts = await prisma.product.findMany({
+      where: {
+        associationId: association.id, // Sécurité : doit appartenir à l'association
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    const inStock = allProducts.filter((p) => p.quantity > 100);
+    const lowStock = allProducts.filter(
+      (p) => p.quantity > 0 && p.quantity <= 100
+    );
+    const outOfStock = allProducts.filter((p) => p.quantity === 0);
+    const criticalProducts = [...lowStock, ...outOfStock];
+
+    return {
+      inStockCount: inStock.length,
+      lowStockCount: lowStock.length,
+      outOfStockCount: outOfStock.length,
+      criticalProducts: criticalProducts.map((p) => ({
+        ...p,
+        categoryName: p.category.name,
+      })),
+    };
+  } catch (error) {
+    // Log l'erreur en cas d'échec de la récupération
+    console.error("Error creating category:", error);
+    return {
+      inStockCount: 0,
+      lowStockCount: 0,
+      outOfStockCount: 0,
+      criticalProducts: [],
+    };
   }
 }

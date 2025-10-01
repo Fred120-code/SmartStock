@@ -45,3 +45,10 @@ export interface ChartData {
   value: number;
   name: string;
 }
+
+export interface StockSummary {
+  inStockCount: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  criticalProducts: Product[];
+}

@@ -3,6 +3,7 @@ import { useUser } from "@clerk/nextjs";
 import Wrapper from "./components/Wrapper";
 import ProductOverview from "./components/ProductOverview";
 import CategoryChart from "./components/CategoryChart";
+import StockSummaryTable from "./components/StockSummaryTable";
 
 export default function Home() {
   // Récupère l'utilisateur connecté et son email
@@ -15,6 +16,9 @@ export default function Home() {
         <div className="md:w-2/3">
           <ProductOverview email={email}/>
           <CategoryChart email={email}/>
+        </div>
+        <div className="md:ml-9 md:mt-0 mt-4 md:w-1/4">
+          <StockSummaryTable email={email}/>
         </div>
       </div>
     </Wrapper>

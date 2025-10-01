@@ -1,0 +1,91 @@
+import { StockSummary } from "@/types";
+import React, { useEffect, useState } from "react";
+import { getStockSummary } from "../actions";
+
+const StockSummaryTable = ({ email }: { email: string }) => {
+  const [data, setData] = useState<StockSummary | null>(null);
+
+  /**
+   * Fonction pour charger les produits de l'utilisateur connecté
+   * Appelle l'action readProduct côté serveur, puis met à jour le state
+   */
+  const fetchSumary = async () => {
+    try {
+      if (email) {
+        const data = await getStockSummary(email);
+        if (data) {
+          setData(data);
+        }
+      }
+    } catch (error) {
+      // Affiche l'erreur en cas d'échec
+      console.error(error);
+    }
+  };
+
+  // Charge les produits au chargement de la page ou lors d'un changement d'email utilisateur
+  useEffect(() => {
+    if (email) {
+      fetchSumary();
+    }
+  }, [email]);
+
+  if (!data) {
+    return (
+      <div className="flex justify-center items-center w-full">
+        <span className="loading loading-dots loading-xl"></span>
+      </div>
+    );
+  }
+  return (
+    <div className="w-full">
+      <ul className="list bg-base-100 rounded-box shadow-md">
+        <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
+          Statistiques des stocks
+        </li>
+
+        <li className="list-row">
+          <div className="text-4xl font-thin opacity-30 tabular-nums">
+            {data.inStockCount}
+          </div>
+          <div className="list-col-grow">
+            <div className=" text-sm opacity-60 tracking-wide">
+              Stock normal
+            </div>
+            <div className="badge badge-soft badge-primary font-bold">
+              Correct
+            </div>
+          </div>
+        </li>
+
+        <li className="list-row">
+          <div className="text-4xl font-thin opacity-30 tabular-nums">
+            {data.lowStockCount}
+          </div>
+          <div className="list-col-grow">
+            <div className=" text-sm opacity-60 tracking-wide">
+              Stock faible
+            </div>
+            <div className="badge badge-warning badge-soft font-bold">
+              à commander
+            </div>
+          </div>
+        </li>
+
+        <li className="list-row">
+          <div className="text-4xl font-thin opacity-30 tabular-nums">
+            {data.outOfStockCount}
+          </div>
+          <div className="list-col-grow">
+            <div className=" text-sm opacity-60 tracking-wide">
+              Stock ecoullé
+            </div>
+            <div className="badge badge-error badge-soft font-bold">urgent</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  );
+};
+
+export default StockSummaryTable;
