@@ -606,7 +606,7 @@ export async function getTransaction(
   }
 }
 
-export async function getProductOverview(
+export async function getProductOverviewStats(
   email: string
 ): Promise<ProductOverviewStat> {
   try {
@@ -662,6 +662,11 @@ export async function getProductOverview(
   } catch (error) {
     // Log l'erreur en cas d'échec de la récupération
     console.error("Error creating category:", error);
-
+    return {
+      totalProducts: 0,
+      totalCategories: 0,
+      totalTransaction: 0,
+      stockValue: 0,
+    };
   }
 }
