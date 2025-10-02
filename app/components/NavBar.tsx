@@ -1,8 +1,20 @@
-"use client"
+"use client";
 
 // Composant de barre de navigation principal de l'application
 import { UserButton, useUser } from "@clerk/nextjs";
-import { ArrowLeftRight, Blocks, CircleGauge, ListTodo, Menu, Package, PackageMinus, PackagePlus, ShoppingCart, Warehouse, X } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Blocks,
+  CircleGauge,
+  ListTodo,
+  Menu,
+  Package,
+  PackageMinus,
+  PackagePlus,
+  ShoppingCart,
+  Warehouse,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -59,6 +71,8 @@ const NavBar = () => {
 
   // État pour gérer l'ouverture du menu mobile
   const [menuOpen, setMenuOpen] = useState(false);
+  // État pour afficher/masquer les labels sur mobile (icônes-only par défaut)
+  const [showMobileLabels, setShowMobileLabels] = useState(false);
 
   // Permet de récupérer le chemin de la page courante
   const pathname = usePathname();
@@ -82,13 +96,17 @@ const NavBar = () => {
             </Link>
           );
         })}
-      <button
-        className="btn btn-sm"
-        onClick={() => (document.getElementById("my_modal_stock") as HTMLDialogElement).showModal()}
-      >
-        <PackagePlus className="h-4 w-4"/>
-        Alimenter le stock
-      </button>
+        <button
+          className="btn btn-sm"
+          onClick={() =>
+            (
+              document.getElementById("my_modal_stock") as HTMLDialogElement
+            ).showModal()
+          }
+        >
+          <PackagePlus className="h-4 w-4" />
+          Alimenter
+        </button>
       </>
     );
   };
@@ -96,50 +114,87 @@ const NavBar = () => {
   // Rendu du composant NavBar
   return (
     <div className="border-b border-base-300 px-5 md:px-[10%] py-4 relative">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-col gap-10">
         {/* Logo et nom de l'application */}
         <div className="flex items-center">
           <div className="p-2">
             <Blocks className="w-6 h-6 text-primary" />
           </div>
-          <span className="font-bold text-xl">SmartStock</span>
+          {/*
+            Le titre est caché sur petits écrans (mobile) et visible à partir de la
+            taille `md` (tablette/desktop). On utilise `hidden md:inline-block`
+            pour que l'élément ne prenne pas d'espace sur mobile.
+          */}
+          <span className="font-bold text-xl hidden md:inline-block">
+            SmartStock
+          </span>
         </div>
 
         {/* Bouton menu mobile */}
-        <button
+        {/* <button
           className="btn w-fit sm:hidden btn-sm rounded-md"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           <Menu className="w-4 h-4" />
-        </button>
+        </button> */}
 
         {/* Liens de navigation (desktop) + bouton utilisateur */}
-        <div className="hidden space-x-2 sm:flex items-center">
+        <div className="hidden space-x-2 sm:flex items-center flex-col justify-between gap-10">
           {renderLinks()}
           <UserButton />
         </div>
-      </div>
 
-      {/* Menu mobile latéral */}
-      <div
-        className={`absolute top-0 w-full bg-gray-700 h-screen flex flex-col gap-2 p-4 transition-all duration-300 sm:hidden z-50
-                ${menuOpen ? "left-0" : "left-full"}
-        `}
-      >
-        <div className="flex justify-between">
-          <UserButton />
-          {/* Bouton pour fermer le menu mobile */}
+        {/* Mobile: icônes seulement avec option d'afficher les labels via le bouton '->' */}
+        <div className="flex flex-col-reverse items-center gap-6 sm:hidden">
+          {navLinks.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href;
+            const activeClass = isActive ? "btn-primary" : "btn-ghost";
+            return (
+              <Link
+                href={href}
+                key={href}
+                className={`btn ${activeClass} btn-sm flex flex-col items-center rounded-lg p-2`}
+              >
+                <Icon className="w-4 h-4" />
+                {/* Label masqué par défaut sur mobile, visible si showMobileLabels=true */}
+                <span
+                  className={`ml-2 transition-all duration-300 text-[11px] ${
+                    showMobileLabels ? "inline-block" : "hidden"
+                  }`}
+                >
+                  {label}
+                </span>
+              </Link>
+            );
+          })}
+          {/* Bouton pour ouvrir le modal d'alimentation (mobile) */}
           <button
-            className="btn w-fit sm:hidden btn-sm rounded-md"
-            onClick={() => setMenuOpen(!menuOpen)}
+            className="btn btn-sm p-2"
+            onClick={() =>
+              (
+                document.getElementById("my_modal_stock") as HTMLDialogElement
+              ).showModal()
+            }
           >
-            <X className="w-4 h-4" />
+            <PackagePlus className="h-4 w-4" />
+            <span
+              className={`ml-2 text-[10px] sm:text-xl ${showMobileLabels ? "inline-block" : "hidden"}`}
+            >
+              Alimenter
+            </span>
+          </button>
+          {/* Bouton '->' pour basculer l'affichage des labels sur mobile */}
+          <button
+            aria-label="Afficher les labels"
+            className="btn btn-ghost btn-sm ml-2"
+            onClick={() => setShowMobileLabels((s) => !s)}
+          >
+            {/* Utilisation d'une flèche simple pour indiquer le toggle */}
+            <span className="text-lg">→</span>
           </button>
         </div>
-        {renderLinks()}
       </div>
-
-      <Stock/>
+      <Stock />
     </div>
   );
 };

@@ -11,21 +11,25 @@ type WrapperProps = {
 // Composant principal
 const Wrapper = ({ children }: WrapperProps) => {
   return (
-    <div>
-      {/* Barre de navigation en haut de page */}
-      <Navbar />
-      {/* Conteneur pour les notifications Toast */}
-      <ToastContainer
-        position="top-center"
-        autoClose={2500}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-      />
-      {/* Contenu principal de la page avec marges */}
-      <div className="px-5 md:px-[10%] mt-8 mb-10">{children}</div>
+    <div className="flex w-full">
+      <div className="w-1/6">
+        {/* Barre de navigation en haut de page */}
+        <Navbar />
+      </div>
+      <div className="w-full">
+        {/* Conteneur pour les notifications Toast */}
+        <ToastContainer
+          position="top-center"
+          autoClose={2500}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
+        {/* Contenu principal de la page avec marges */}
+        <div className="px-5 md:px-[10%] mt-8 mb-10">{children}</div>
+      </div>
     </div>
   );
 };
