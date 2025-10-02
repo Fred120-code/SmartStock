@@ -151,21 +151,28 @@ const NavBar = () => {
             const isActive = pathname === href;
             const activeClass = isActive ? "btn-primary" : "btn-ghost";
             return (
-              <Link
-                href={href}
-                key={href}
-                className={`btn ${activeClass} btn-sm flex flex-col items-center justify-center rounded-lg p-2`}
+              <div 
+                className=" tooltip tooltip-primary" 
+                data-tip= {label} 
+                key={label}
+                
               >
-                <Icon className="w-4 h-4" />
-                {/* Label masqué par défaut sur mobile, visible si showMobileLabels=true */}
-                <span
-                  className={`ml-2 transition-all text-center duration-300 text-[11px] ${
-                    showMobileLabels ? "inline-block" : "hidden"
-                  }`}
+                <Link
+                  href={href}
+                  key={href}
+                  className={`btn ${activeClass} btn-sm flex flex-col items-center justify-center rounded-lg p-2`}
                 >
-                  {label}
-                </span>
-              </Link>
+                  <Icon className="w-4 h-4" />
+                  {/* Label masqué par défaut sur mobile, visible si showMobileLabels=true */}
+                  <span
+                    className={`ml-2 transition-all text-center duration-300 text-[11px] ${
+                      showMobileLabels ? "inline-block" : "hidden"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </Link>
+              </div>
             );
           })}
           {/* Bouton pour ouvrir le modal d'alimentation (mobile) */}
