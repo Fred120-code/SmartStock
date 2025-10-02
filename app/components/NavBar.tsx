@@ -5,6 +5,7 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import {
   ArrowLeftRight,
   Blocks,
+  ChevronRight,
   CircleGauge,
   ListTodo,
   Menu,
@@ -145,7 +146,7 @@ const NavBar = () => {
         </div>
 
         {/* Mobile: icônes seulement avec option d'afficher les labels via le bouton '->' */}
-        <div className="flex flex-col-reverse items-center gap-6 sm:hidden">
+        <div className="flex flex-col items-center gap-6 sm:hidden">
           {navLinks.map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href;
             const activeClass = isActive ? "btn-primary" : "btn-ghost";
@@ -153,12 +154,12 @@ const NavBar = () => {
               <Link
                 href={href}
                 key={href}
-                className={`btn ${activeClass} btn-sm flex flex-col items-center rounded-lg p-2`}
+                className={`btn ${activeClass} btn-sm flex flex-col items-center justify-center rounded-lg p-2`}
               >
                 <Icon className="w-4 h-4" />
                 {/* Label masqué par défaut sur mobile, visible si showMobileLabels=true */}
                 <span
-                  className={`ml-2 transition-all duration-300 text-[11px] ${
+                  className={`ml-2 transition-all text-center duration-300 text-[11px] ${
                     showMobileLabels ? "inline-block" : "hidden"
                   }`}
                 >
@@ -190,7 +191,9 @@ const NavBar = () => {
             onClick={() => setShowMobileLabels((s) => !s)}
           >
             {/* Utilisation d'une flèche simple pour indiquer le toggle */}
-            <span className="text-lg">→</span>
+            <span className="text-lg">
+              <ChevronRight className="w-4 h-4"/>
+            </span>
           </button>
         </div>
       </div>
