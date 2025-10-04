@@ -20,7 +20,7 @@ export default function ChangeMode() {
 
   return (
     <button
-      className="btn btn-primary btn-soft btn-sm rounded-lg"
+      className="ml-10 mt-2 btn btn-primary btn-soft btn-sm rounded-lg"
       onClick={toggleTheme}
       aria-label={`Basculer le thème (actuel: ${theme})`}
     >

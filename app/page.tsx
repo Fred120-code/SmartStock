@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useUser } from "@clerk/nextjs";
 import Wrapper from "./components/Wrapper";
 import ProductOverview from "./components/ProductOverview";
@@ -26,4 +26,3 @@ export default function Home() {
     </Wrapper>
   );
 }
- 

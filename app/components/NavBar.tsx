@@ -81,7 +81,7 @@ const NavBar = () => {
   // Fonction pour afficher dynamiquement les liens de navigation
   const renderLinks = () => {
     return (
-      <>
+      <div className="flex flex-col justify-center gap-9 items-start">
         {navLinks.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
           const activeClass = isActive ? "btn-primary" : "btn-ghost";
@@ -108,13 +108,13 @@ const NavBar = () => {
           <PackagePlus className="h-4 w-4" />
           Alimenter
         </button>
-      </>
+      </div>
     );
   };
 
   // Rendu du composant NavBar
   return (
-    <div className="border-b border-base-300 px-5 md:px-[10%] py-4 relative">
+    <div className="border-2 bg-primary/25 mt-7 ml-7 rounded-2xl border-base-300 px-5 md:px-[10%] py-4 relative">
       <div className="flex justify-between items-center flex-col gap-10">
         {/* Logo et nom de l'application */}
         <div className="flex items-center">
@@ -162,7 +162,7 @@ const NavBar = () => {
                   key={href}
                   className={`btn ${activeClass} btn-sm flex flex-col items-center justify-center rounded-lg p-2`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-5 h-5" />
                   {/* Label masqué par défaut sur mobile, visible si showMobileLabels=true */}
                   <span
                     className={`ml-2 transition-all text-center duration-300 text-[11px] ${

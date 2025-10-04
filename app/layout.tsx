@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SmartStock IA",
-  description: "created by FRED",
+  description: "created by JORAN FRED",
 };
 
 export default function RootLayout({
