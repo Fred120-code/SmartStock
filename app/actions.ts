@@ -718,6 +718,8 @@ export async function getProductCategoryDistribution(email: string) {
   }
 }
 
+
+//recupere les stats
 export async function getStockSummary(email: string): Promise<StockSummary> {
   try {
     // Vérifie la présence de l'email
@@ -737,7 +739,7 @@ export async function getStockSummary(email: string): Promise<StockSummary> {
     // Recherche le produit par son ID et l'association, inclut la catégorie associée
     const allProducts = await prisma.product.findMany({
       where: {
-        associationId: association.id, // Sécurité : doit appartenir à l'association
+        associationId: association.id, 
       },
       include: {
         category: true,
@@ -771,3 +773,51 @@ export async function getStockSummary(email: string): Promise<StockSummary> {
     };
   }
 }
+
+
+//generateur de rapport intelligent avec gemini
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+
+export async function generateStockReport(email: string) {
+  try {
+    // Récupérer les stats depuis la BDD
+    const stats = await getStockSummary(email);
+
+    // Vérifier qu'on a une clé API
+    if (!process.env.GEMINI_API_KEY) {
+      // Retourne un message lisible au front plutôt qu'une exception brute
+      return `Clé API Gemini manquante (GEMINI_API_KEY). Impossible de générer le rapport.`;
+    }
+
+    // Appeler Gemini
+    const model = genAI.getGenerativeModel({ model: "gemini-pro-latest" });
+
+    const prompt = `
+    Tu es un expert en gestion de stock. 
+    Analyse ces données et écris un rapport clair et synthétique pour un gestionnaire non technique.
+    n'ajoute pas de style au texte(pas de gars ou autre) juste du texte
+
+    Données:
+    ${JSON.stringify(stats)}
+
+    Format attendu:
+    - Résumé global
+    - Points positifs
+    - Risques ou alertes
+    - Recommandations
+    `;
+
+    const result = await model.generateContent(prompt);
+    // Le SDK renvoie souvent un objet complexe. On essaie d'extraire le texte.
+    if (result?.response?.text) return result.response.text();
+    if (typeof result === "string") return result;
+    return JSON.stringify(result);
+  } catch (err) {
+    console.error("generateStockReport error:", err);
+    return `Erreur lors de la génération du rapport: ${String(err)}`;
+  }
+}
+
+

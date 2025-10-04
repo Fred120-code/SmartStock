@@ -16,7 +16,7 @@ import EmphyState from "./EmphyState";
 const CategoryChart = ({ email }: { email: string }) => {
   const [data, setData] = useState<ChartData[]>([]);
   const COLOR = {
-    default: "#6D0076",
+    default: "#5B63F6", // fallback couleur harmonisée bleu-violet
   };
 
   /**
@@ -61,7 +61,7 @@ const CategoryChart = ({ email }: { email: string }) => {
           dataKey="name"
           tick={{
             fontSize: 15,
-            fill: "#6D0076",
+            fill: "#00000",
             fontWeight: "bold",
           }}
           tickLine
@@ -69,9 +69,31 @@ const CategoryChart = ({ email }: { email: string }) => {
         <YAxis hide />
         <Legend iconType="line" />
         <Tooltip />
-        <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={ widthOverride ? 200: undefined}>
+        {/* Définition du dégradé SVG (bleu moderne -> violet moderne) */}
+        <defs>
+          <linearGradient id="gradBlueViolet" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="20%" stopColor="#FFFFFF" />
+            <stop offset="100%" stopColor="#FFFFFF" />
+          </linearGradient>
+        </defs>
+
+        <Bar
+          dataKey="value"
+          radius={[8, 8, 0, 0]}
+          barSize={widthOverride ? 200 : undefined}
+          stroke="#6D0076"
+        >
           {data.map((entry, index) => (
-            <Cell key={`cell=${index}`} fill={COLOR.default} cursor="default" />
+            // Utilise le dégradé SVG via url(#gradBlueViolet). Si le navigateur ne supporte pas,
+            // la couleur fallback dans `COLOR.default` sera utilisée.
+            <Cell
+              key={`cell=${index}`}
+              cursor="default"
+              fill={`url(#gradBlueViolet)`}
+              // aria-description utile pour accessibilité si nécessaire
+              aria-label={`${entry.name}: ${entry.value}`}
+            />
           ))}
         </Bar>
       </BarChart>
@@ -92,8 +114,10 @@ const CategoryChart = ({ email }: { email: string }) => {
   }
 
   return (
-    <div className="w-full border-2 border-base-200 m-4 p-4 rounded-3xl">
-      <h1 className="text-primary text-xl font-semibold mt-4 mb-4">Les meilleurs produits</h1>
+    <div className="w-full border-2 border-base-200 m-4 p-4 bg-primary/20 rounded-3xl">
+      <h1 className="text-primary text-xl font-semibold mt-4 mb-4">
+        Les meilleurs produits
+      </h1>
       <h2 className="">{renderChart()}</h2>
     </div>
   );

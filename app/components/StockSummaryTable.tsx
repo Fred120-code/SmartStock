@@ -39,17 +39,17 @@ const StockSummaryTable = ({ email }: { email: string }) => {
   }
   return (
     <div className="w-full">
-      <ul className="list bg-base-100 rounded-box shadow-md">
-        <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
+      <ul className="list bg-primary/20 rounded-box shadow-md">
+        <li className="p-4 pb-2 text-xl  font-semibold tracking-wide text-primary">
           Statistiques des stocks
         </li>
 
         <li className="list-row">
-          <div className="text-4xl font-thin opacity-30 tabular-nums">
+          <div className="text-4xl font-thin  tabular-nums">
             {data.inStockCount}
           </div>
           <div className="list-col-grow">
-            <div className=" text-sm opacity-60 tracking-wide">
+            <div className=" text-sm  tracking-wide">
               Stock normal
             </div>
             <div className="badge badge-soft badge-primary font-bold">
@@ -59,11 +59,11 @@ const StockSummaryTable = ({ email }: { email: string }) => {
         </li>
 
         <li className="list-row">
-          <div className="text-4xl font-thin opacity-30 tabular-nums">
+          <div className="text-4xl font-thin  tabular-nums">
             {data.lowStockCount}
           </div>
           <div className="list-col-grow">
-            <div className=" text-sm opacity-60 tracking-wide">
+            <div className=" text-sm tracking-wide">
               Stock faible
             </div>
             <div className="badge badge-warning badge-soft font-bold">
@@ -73,11 +73,11 @@ const StockSummaryTable = ({ email }: { email: string }) => {
         </li>
 
         <li className="list-row">
-          <div className="text-4xl font-thin opacity-30 tabular-nums">
+          <div className="text-4xl font-thin  tabular-nums">
             {data.outOfStockCount}
           </div>
           <div className="list-col-grow">
-            <div className=" text-sm opacity-60 tracking-wide">
+            <div className=" text-sm  tracking-wide">
               Stock ecoullé
             </div>
             <div className="badge badge-error badge-soft font-bold">urgent</div>

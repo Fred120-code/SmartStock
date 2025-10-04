@@ -18,18 +18,9 @@ export default function ChangeMode() {
     setTheme((prev) => (prev === "fantasy" ? "night" : "fantasy"));
   };
 
-  return (
-    <button
-      className="btn btn-primary btn-soft btn-sm rounded-lg"
-      onClick={toggleTheme}
-      aria-label={`Basculer le thème (actuel: ${theme})`}
-    >
-      {/* Affiche l'icône Sun en mode 'fantasy', Moon en mode 'night' */}
-      {theme === "fantasy" ? (
-        <Sun className="w-5 h-5" />
-      ) : (
-        <Moon className="w-5 h-5" />
-      )}
-    </button>
-  );
+	return (
+		<button className="btn btn-primary btn-soft btn-sm rounded-lg" onClick={toggleTheme}>
+		 mode {theme === "fantasy" ? "night" : "fantasy"}
+		</button>
+	);
 }

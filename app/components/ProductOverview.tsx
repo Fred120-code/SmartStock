@@ -43,7 +43,7 @@ const ProductOverview = ({email}: {email:string}) => {
       {stats ? (
         <div className="grid grid-cols-2 gap-4">
           <div className="border-2 p-4 border-base-200 rounded-3xl">
-            <p className="stat-title">Nombre de Produit</p>
+            <p className="stat-title text-primary">Nombre de Produit</p>
             <div className="flex justify-between items-center">
               <div className="stat-value">{stats.totalProducts}</div>
               <div className="bg-primary/25 p-3 rounded-full">
@@ -53,7 +53,7 @@ const ProductOverview = ({email}: {email:string}) => {
           </div>
 
           <div className="border-2 p-4 border-base-200 rounded-3xl">
-            <p className="stat-title">Nombre de Category</p>
+            <p className="stat-title text-primary">Nombre de Category</p>
             <div className="flex justify-between items-center">
               <div className="stat-value">{stats.totalCategories}</div>
               <div className="bg-primary/25 p-3 rounded-full">
@@ -63,9 +63,11 @@ const ProductOverview = ({email}: {email:string}) => {
           </div>
 
           <div className="border-2 p-4 border-base-200 rounded-3xl">
-            <p className="stat-title">Prix Total</p>
+            <p className="stat-title text-primary">Prix Total</p>
             <div className="flex justify-between items-center">
-              <div className="stat-value">{formatNumber(stats.stockValue)} F</div>
+              <div className="stat-value">
+                {formatNumber(stats.stockValue)} F
+              </div>
               <div className="bg-primary/25 p-3 rounded-full">
                 <SwissFranc className="w-5 h-5 text-primary text-3xl" />
               </div>
@@ -73,7 +75,7 @@ const ProductOverview = ({email}: {email:string}) => {
           </div>
 
           <div className="border-2 p-4 border-base-200 rounded-3xl">
-            <p className="stat-title">Nombre de Transaction</p>
+            <p className="stat-title text-primary">Nombre de Transaction</p>
             <div className="flex justify-between items-center">
               <div className="stat-value">{stats.totalTransaction}</div>
               <div className="bg-primary/25 p-3 rounded-full">
