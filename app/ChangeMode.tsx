@@ -19,8 +19,8 @@ export default function ChangeMode() {
   };
 
 	return (
-		<button className="btn btn-primary btn-soft btn-sm rounded-lg" onClick={toggleTheme}>
-		 mode {theme === "fantasy" ? "night" : "fantasy"}
+		<button className=" ml-9 mt-2 btn btn-primary btn-soft btn-sm rounded-lg" onClick={toggleTheme}>
+		 {theme === "fantasy" ? (<Sun className="w-4  h-4"/>) : (<Moon className="w-4  h-4"/>)}
 		</button>
 	);
 }
