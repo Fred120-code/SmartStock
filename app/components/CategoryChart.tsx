@@ -61,7 +61,7 @@ const CategoryChart = ({ email }: { email: string }) => {
           dataKey="name"
           tick={{
             fontSize: 15,
-            fill: "#00000",
+            fill: "#FFFFFF",
             fontWeight: "bold",
           }}
           tickLine
@@ -114,7 +114,7 @@ const CategoryChart = ({ email }: { email: string }) => {
   }
 
   return (
-    <div className="w-full border-2 border-base-200 m-4 p-4 bg-primary/20 rounded-3xl">
+    <div className="w-full border-2 border-base-200 mt-4 p-4 bg-primary/20 rounded-3xl">
       <h1 className="text-primary text-xl font-semibold mt-4 mb-4">
         Les meilleurs produits
       </h1>

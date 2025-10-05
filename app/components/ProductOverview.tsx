@@ -53,7 +53,7 @@ const ProductOverview = ({email}: {email:string}) => {
           </div>
 
           <div className="border-2 p-4 border-base-200 rounded-3xl">
-            <p className="stat-title text-primary">Nombre de Category</p>
+            <p className="stat-title text-primary">Nombre de Categorie</p>
             <div className="flex justify-between items-center">
               <div className="stat-value">{stats.totalCategories}</div>
               <div className="bg-primary/25 p-3 rounded-full">

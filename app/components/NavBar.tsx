@@ -114,7 +114,7 @@ const NavBar = () => {
 
   // Rendu du composant NavBar
   return (
-    <div className="border-2 bg-primary/25 mt-7 ml-7 rounded-2xl border-base-300 px-5 md:px-[10%] py-4 relative">
+    <div className="border-2 bg-primary/25 mt-7 ml-7 rounded-2xl border-base-100 px-5 md:px-[10%] py-4 relative">
       <div className="flex justify-between items-center flex-col gap-10">
         {/* Logo et nom de l'application */}
         <div className="flex items-center">
