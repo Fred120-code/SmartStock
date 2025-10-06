@@ -9,6 +9,7 @@ import {
   StockSummary,
   Transaction,
 } from "@/types";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PricingTable } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
 import { exportPages } from "next/dist/export/worker";
@@ -608,6 +609,11 @@ export async function getTransaction(
   }
 }
 
+/**
+ * Recupere les information concernant les produits, categories et transactions de la base de données et fait les calculs
+ * @param email L'email de l'utilisateur/association (sert à vérifier l'appartenance)
+ * @returns le nombre total de produit, categories,transaction et la valeur du stock
+ */
 export async function getProductOverviewStats(
   email: string
 ): Promise<ProductOverviewStat> {
@@ -638,22 +644,24 @@ export async function getProductOverviewStats(
       },
     });
 
+    //recherche les transaction effectuer
     const transactions = await prisma.transaction.findMany({
       where: {
         associationId: association.id, // Sécurité : doit appartenir à l'association
       },
     });
 
+    //liste les categories et supprime les doublons
     const categorieSet = new Set(
       products.map((product) => product.category.name)
     );
 
-    const totalProducts = products.length;
-    const totalCategories = categorieSet.size;
-    const totalTransaction = transactions.length;
+    const totalProducts = products.length;  //calcul le nombre de produits
+    const totalCategories = categorieSet.size; //calcul le nombre de categories
+    const totalTransaction = transactions.length; //calcul le nombre de transactions
     const stockValue = products.reduce((acc, product) => {
       return acc + product.price * product.quantity;
-    }, 0);
+    }, 0); //permet de trouver la valeur de stock
 
     return {
       totalProducts,
@@ -673,6 +681,11 @@ export async function getProductOverviewStats(
   }
 }
 
+/**
+ * Recupere les noms et categories des produits disponibles
+ * @param email 
+ * @returns 
+ */
 export async function getProductCategoryDistribution(email: string) {
   try {
     // Vérifie la présence de l'email
@@ -734,7 +747,6 @@ export async function getStockSummary(email: string): Promise<StockSummary> {
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
-    const R = 5;
 
     // Recherche le produit par son ID et l'association, inclut la catégorie associée
     const allProducts = await prisma.product.findMany({
@@ -776,8 +788,6 @@ export async function getStockSummary(email: string): Promise<StockSummary> {
 
 
 //generateur de rapport intelligent avec gemini
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function generateStockReport(email: string) {
@@ -810,7 +820,8 @@ export async function generateStockReport(email: string) {
     `;
 
     const result = await model.generateContent(prompt);
-    // Le SDK renvoie souvent un objet complexe. On essaie d'extraire le texte.
+    
+    // extraction du texte le 
     if (result?.response?.text) return result.response.text();
     if (typeof result === "string") return result;
     return JSON.stringify(result);

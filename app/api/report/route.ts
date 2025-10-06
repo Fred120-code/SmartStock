@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error("/api/report error:", err);
     return NextResponse.json(
-      { error: "Erreur génération rapport" },
+      { error: "Erreur lors de la génération du rapport" },
       { status: 500 }
     );
   }
