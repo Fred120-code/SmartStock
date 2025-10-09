@@ -84,17 +84,17 @@ const Stock = () => {
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-lg">Gestion des stocks</h3>
-          <p className="py-4">
-            Ajouter des quantités aux produits dans votres stock
-          </p>
+          <h3 className="font-bold text-lg mb-6">
+            Ajouter des quantités aux produits
+          </h3>
           <form className="space-y-2" onSubmit={handleSubmit}>
-            <label className="block">Selectionner un produit</label>
             <select
               value={selectedProductId}
               className="select select-bordered w-full"
               required
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleProductChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                handleProductChange(e.target.value)
+              }
             >
               <option value="">Selectionner un produit</option>
               {products.map((product) => (

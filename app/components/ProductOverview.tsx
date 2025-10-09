@@ -1,7 +1,7 @@
 import { ProductOverviewStat } from '@/types'
 import React, { useEffect, useState } from 'react'
 import { getProductOverviewStats } from '../actions';
-import { ArrowLeftRight, Box, SwissFranc, Tag } from 'lucide-react';
+import { ArrowLeftRight, Box, Landmark, Tag } from 'lucide-react';
 
 const ProductOverview = ({email}: {email:string}) => {
     
@@ -69,7 +69,7 @@ const ProductOverview = ({email}: {email:string}) => {
                 {formatNumber(stats.stockValue)} F
               </div>
               <div className="bg-primary/25 p-3 rounded-full">
-                <SwissFranc className="w-5 h-5 text-primary text-3xl" />
+                <Landmark className="w-5 h-5 text-primary text-3xl" />
               </div>
             </div>
           </div>
