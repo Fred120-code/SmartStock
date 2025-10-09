@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Wrapper from "../components/Wrapper";
 import { Transaction, Product } from "@/types";
 import { getTransaction, readProduct } from "../actions";
@@ -77,12 +77,30 @@ const page = () => {
     setCurrentPage(1);
   }, [selectedProduct, dateFrom, dateTo, transaction]);
 
-  const totalPages = Math.ceil(fileteredTransaction.length / ITEMS_PER_PAGE);
-  const startIndex = (currenPage - 1) * ITEMS_PER_PAGE;
-  const currentTransaction = fileteredTransaction.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
+  const totalPages = useMemo(
+    () => Math.ceil(fileteredTransaction.length / ITEMS_PER_PAGE),
+    [fileteredTransaction.length]
   );
+
+  // si totalPages diminue (ex: via filtre), on ajuste la page courante
+  useEffect(() => {
+    if (totalPages === 0) {
+      setCurrentPage(1); // optionnel: garder 1 quand il n'y a rien
+    } else if (currenPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currenPage]);
+
+  
+const startIndex = useMemo(
+  () => (currenPage - 1) * ITEMS_PER_PAGE,
+  [currenPage]
+);
+
+ const currentTransactions = useMemo(
+   () => fileteredTransaction.slice(startIndex, startIndex + ITEMS_PER_PAGE),
+   [fileteredTransaction, startIndex]
+ );
 
   return (
     <Wrapper>
@@ -135,13 +153,13 @@ const page = () => {
 
             <button
               className="btn btn-primary"
-              onClick={()=> {
-                setSelectedProduct(null)
-                setDateFrom("")
-                setDateTo("")
+              onClick={() => {
+                setSelectedProduct(null);
+                setDateFrom("");
+                setDateTo("");
               }}
             >
-              <ListRestart className="w-4 h-4"/>
+              <ListRestart className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -155,14 +173,14 @@ const page = () => {
           </div>
         ) : (
           <div className="flex flex-col gap-2 w-full">
-            {currentTransaction.map((tx) => (
+            {currentTransactions.map((tx) => (
               <TransactionComponent key={tx.id} tx={tx} />
             ))}
           </div>
         )}
 
         {fileteredTransaction.length > ITEMS_PER_PAGE && (
-          <div className="join grid grid-cols-2">
+          <div className="join grid grid-cols-3 space-x-3">
             <button
               className="join-item btn btn-outline"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -170,6 +188,9 @@ const page = () => {
             >
               «
             </button>
+            <div className="text-primary text-sm">
+              Page {currenPage}/{totalPages}
+            </div>
             <button
               className="join-item btn btn-outline"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
