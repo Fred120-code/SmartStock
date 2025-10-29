@@ -97,7 +97,7 @@ const CategoryChart = ({ email }: { email: string }) => {
           ))}
         </Bar>
       </BarChart>
-    </ResponsiveContainer>
+    </ResponsiveContainer> 
   );
 
   if (data.length == 0) {

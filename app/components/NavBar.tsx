@@ -70,8 +70,7 @@ const NavBar = () => {
     },
   ];
 
-  // État pour gérer l'ouverture du menu mobile
-  const [menuOpen, setMenuOpen] = useState(false);
+
   // État pour afficher/masquer les labels sur mobile (icônes-only par défaut)
   const [showMobileLabels, setShowMobileLabels] = useState(false);
 

@@ -13,6 +13,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
   // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
+  
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [product, setproduct] = useState<Product | null>(null);

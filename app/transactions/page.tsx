@@ -216,7 +216,7 @@ const page = () => {
         {fileteredTransaction.length > ITEMS_PER_PAGE && (
           <div className="join grid grid-cols-3 space-x-3">
             <button
-              className="join-item btn btn-outline"
+              className="join-item btn btn-outline btn-soft btn-primary"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currenPage === 1}
             >
@@ -226,7 +226,7 @@ const page = () => {
               Page {currenPage}/{totalPages}
             </div>
             <button
-              className="join-item btn btn-outline"
+              className="join-item btn btn-outline btn-soft btn-primary"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currenPage === totalPages}
             >
