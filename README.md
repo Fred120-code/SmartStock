@@ -159,9 +159,3 @@ Créez un fichier `.env.local` à la racine du projet avec au minimum :
 - Vérifier suppression :
   - Appeler DELETE `/api/uploads` avec `{ "path": "/uploads/nom.jpg" }` via Postman/curl et vérifier réponse JSON et suppression physique du fichier.
 
-## Améliorations possibles
-
-- Utiliser Prisma transactions partout pour garantir atomicité (mise à jour stock + création transaction).
-- Ajout d'une UI d'erreur côté front pour afficher les erreurs API lisiblement (au lieu de console.log).
-- Tests unitaires pour actions Prisma et routes API.
-- Mise en cache / rate-limit pour les appels à l'IA (coûts).
