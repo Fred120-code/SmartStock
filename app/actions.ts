@@ -224,14 +224,14 @@ export async function createProduct(formData: FormDataType, email: string) {
     // Création du produit dans la base de données avec toutes les informations
     await prisma.product.create({
       data: {
-        name, // Nom du produit
-        description, // Description du produit
-        price: Number(price), // Prix converti en nombre
-        imageUrl: safeImageUrl, // URL de l'image (ou vide)
-        categoryId, // ID de la catégorie associée
-        unit: safeUnit, // Unité de mesure (ou vide)
-        associationId: association.id, // ID de l'association propriétaire
-        quantity: Number(quantity), // Quantité initiale convertie en nombre
+        name, 
+        description, 
+        price: Number(price), 
+        imageUrl: safeImageUrl, 
+        categoryId, 
+        unit: safeUnit, 
+        associationId: association.id, 
+        quantity: Number(quantity), 
       },
     });
   } catch (error) {

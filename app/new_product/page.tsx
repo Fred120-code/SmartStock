@@ -10,7 +10,7 @@ import { FileImage } from "lucide-react"; // Icône pour l'image par défaut
 import ProductImage from "../components/ProductImage"; // Composant d'affichage de l'image du produit
 import { toast } from "react-toastify"; // Pour afficher des notifications
 import { useRouter } from "next/navigation"; // Pour la navigation après création
-
+import { supabase } from "@/lib/supabase";
 const page = () => {
   // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
@@ -76,27 +76,39 @@ const page = () => {
       return;
     }
     try {
-      // Upload de l'image
-      const imagedata = new FormData();
-      imagedata.append("file", file);
-      const res = await fetch("api/upload", {
-        method: "POST",
-        body: imagedata,
-      });
+     
+      //creer un nom unique pour l'image
+      const filename = crypto.randomUUID()+ "."+ file.name.split(".").pop()
 
-      const data = await res.json();
-      if (!data.succes) {
-        throw new Error("Erreur lors de l'upload de l'image");
-      } else {
-        // Ajoute le chemin de l'image au formData puis crée le produit
-        formData.imageUrl = data.path;
-        await createProduct(formData, email);
-        toast.success("Produit creer avec succes");
-        router.push("/products");
+      //upload dans le bucket supabase
+      const {data: uploadData, error: uploadError} = await  supabase.storage
+      .from("uploads-images")
+      .upload(filename, file, {
+        cacheControl: "3600",
+        upsert: false,
+      })
+
+      if(uploadError){
+        console.error(uploadError)
+        toast.error("Error lors de l'upload de l'image")
+        return;
       }
+
+      //recupere l'url public de l'image
+      const {data:{publicUrl}} = supabase.storage
+      .from("uploads-images")
+      .getPublicUrl(filename)
+
+      //met à jour fromData avec l'url supabase
+      const updatedFormData = {...formData, imageUrl: publicUrl}
+
+      //créé le produit
+      await createProduct(updatedFormData, email)
+      toast.success("Produit créé avec succès !")
+      router.push("/products")
     } catch (error) {
       console.error(error);
-      toast.error("Erreur");
+      toast.error("Erreur rancontrée");
     }
   };
 
