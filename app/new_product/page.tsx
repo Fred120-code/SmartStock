@@ -1,14 +1,13 @@
-// Page de création d'un nouveau produit
 "use client";
 import React, { useEffect, useState } from "react";
-import Wrapper from "../components/Wrapper"; // Composant d'habillage général
+import Wrapper from "../components/Wrapper"; 
 import { useUser } from "@clerk/nextjs"; // Hook pour récupérer l'utilisateur connecté
-import { Category } from "@prisma/client"; // Type de catégorie
+import { Category } from "@prisma/client"; 
 import { FormDataType } from "@/types"; // Type pour les données du formulaire produit
 import { createProduct, readCeategory } from "../actions"; // Actions pour créer un produit et lire les catégories
-import { FileImage } from "lucide-react"; // Icône pour l'image par défaut
-import ProductImage from "../components/ProductImage"; // Composant d'affichage de l'image du produit
-import { toast } from "react-toastify"; // Pour afficher des notifications
+import { FileImage } from "lucide-react"; 
+import ProductImage from "../components/ProductImage"; 
+import { toast } from "react-toastify"; 
 import { useRouter } from "next/navigation"; // Pour la navigation après création
 
 const page = () => {
