@@ -1,8 +1,7 @@
-// Importation des modules nécessaires
 import { existsSync } from "fs"; // Pour vérifier l'existence d'un fichier ou dossier
 import { NextRequest, NextResponse } from "next/server"; // Pour gérer les requêtes/réponses Next.js API
-import path, { join } from "path"; // Pour manipuler les chemins de fichiers
-import { mkdir, unlink, writeFile } from "fs/promises"; // Pour créer des dossiers, supprimer et écrire des fichiers de façon asynchrone
+import { join } from "path"; // Pour manipuler les chemins de fichiers
+import { unlink } from "fs/promises"; // Pour supprimer des fichiers de façon asynchrone
 import { supabase } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
@@ -34,56 +33,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// /**
-//  * Route POST pour l'upload de fichiers
-//  * Cette fonction reçoit un fichier via un formulaire, le sauvegarde sur le disque, et retourne son chemin public
-//  * @param request - Requête HTTP de type NextRequest
-//  */
-// export async function POST(request: NextRequest) {
-//   try {
-//     // Récupère les données du formulaire envoyé (multipart/form-data)
-//     const data = await request.formData();
-
-//     // Récupère le fichier envoyé sous le nom "file" (clé du champ dans le formulaire)
-//     const file: File | null = data.get("file") as unknown as File;
-
-//     // Vérifie si un fichier a bien été envoyé
-//     if (!file) {
-//       // Si aucun fichier n'est envoyé, retourne une réponse JSON indiquant l'échec
-//       return NextResponse.json({ succes: false });
-//     }
-
-//     // Convertit le fichier reçu en buffer (pour pouvoir l'écrire sur le disque)
-//     const bytes = await file.arrayBuffer();
-//     const buffer = Buffer.from(bytes);
-
-//     // Détermine le dossier de destination pour l'upload (public/uploads à la racine du projet)
-//     const uploaDir = join(process.cwd(), "public", "uploads");
-
-//     // Si le dossier n'existe pas, on le crée récursivement
-//     if (!existsSync(uploaDir)) {
-//       await mkdir(uploaDir, { recursive: true });
-//     }
-
-//     // Récupère l'extension du fichier d'origine (ex: jpg, png, pdf...)
-//     const ext = file.name.split(".").pop();
-//     // Génère un nom de fichier unique pour éviter les collisions (UUID + extension)
-//     const UniqueName = crypto.randomUUID() + "." + ext;
-//     // Chemin absolu où sera stocké le fichier sur le disque
-//     const filePath = join(uploaDir, UniqueName);
-//     // Chemin public (URL) pour accéder au fichier depuis le front
-//     const publicPath = `/uploads/${UniqueName}`;
-
-//     // Écrit le buffer sur le disque à l'emplacement filePath
-//     await writeFile(filePath, buffer);
-
-//     // Retourne une réponse JSON avec le chemin public du fichier uploadé
-//     return NextResponse.json({ succes: true, path: publicPath });
-//   } catch (error) {
-//     // En cas d'erreur, affiche l'erreur dans la console
-//     console.error(error);
-//   }
-// }
 
 /**
  * Route DELETE pour supprimer un fichier uploadé
