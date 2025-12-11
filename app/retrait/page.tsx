@@ -1,14 +1,16 @@
 "use client";
-import { OrderItem, Product } from "@/types";
-import { useUser } from "@clerk/nextjs";
+import { Trash } from "lucide-react";
+import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
-import { deductStockWithTransaction, readProduct } from "../actions";
+
+import { OrderItem, Product } from "@/types";
+
+import { useUser } from "@clerk/nextjs";
+import { deductStockWithTransaction, readProduct } from "@/app/actions/index";
 import Wrapper from "../components/Wrapper";
 import ProductComponent from "../components/ProductComponent";
 import EmphyState from "../components/EmphyState";
 import ProductImage from "../components/ProductImage";
-import { Trash } from "lucide-react";
-import { toast } from "react-toastify";
 
 const page = () => {
   // Récupère l'utilisateur connecté et son email
@@ -30,7 +32,7 @@ const page = () => {
   const fetchProduct = async () => {
     try {
       if (email) {
-        const products = await readProduct(email);
+        const products = await readProduct(email, searchQuery, selectedProductId);
         if (products) {
           setProducts(products);
         }

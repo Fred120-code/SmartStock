@@ -138,39 +138,53 @@ export async function deleteProduct(id: string, email: string) {
  * @returns Un tableau de produits enrichis du nom de leur catégorie, ou undefined en cas d'erreur
  */
 export async function readProduct(
-  email: string
+  email: string,
+  searchQuery?: string,
+  selectedProductId: string[] = []
 ): Promise<Product[] | undefined> {
   try {
-    // Vérifie la présence de l'email fourni en paramètre
     if (!email) {
       throw new Error("l'email est requis.");
     }
-
-    // Récupère l'association liée à l'email
     const association = await getAssociation(email);
 
-    // Si aucune association n'est trouvée, on lève une erreur explicite
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
 
-    // Récupère tous les produits liés à cette association, en incluant la catégorie associée à chaque produit
+    // Constructeur de filtre dynamique
+    const where: any = {
+      associationId: association.id,
+    };
+
+    // Ajoute le filtre pour exclure les produits selectionnés
+    if (selectedProductId && selectedProductId.length > 0) {
+      where.id = {
+        notIn: selectedProductId,
+      };
+    }
+
     const products = await prisma.product.findMany({
-      where: {
-        associationId: association.id, // On filtre sur l'association courante
-      },
+      where,
       include: {
-        category: true, // On inclut les informations de la catégorie liée
+        category: true,
       },
     });
 
+    // Filtre les résultats côté client (case-insensitive) si searchQuery est fourni
+    const filteredProducts =
+      searchQuery && searchQuery.trim() !== ""
+        ? products.filter((product) =>
+            product.name.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        : products;
+
     // Pour chaque produit, on ajoute le nom de la catégorie (categoryName) pour simplifier l'affichage côté front
-    return products.map((product) => ({
+    return filteredProducts.map((product) => ({
       ...product,
       categoryName: product.category?.name, // Ajoute le nom de la catégorie si elle existe
     }));
   } catch (error) {
-    // Log l'erreur en cas d'échec de la récupération
     console.error("Error reading products:", error);
   }
 }

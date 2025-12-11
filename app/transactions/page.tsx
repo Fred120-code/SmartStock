@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState, useMemo } from "react";
 import Wrapper from "../components/Wrapper"; 
 import { Transaction, Product } from "@/types"; 
-import { getTransaction, readProduct } from "../actions"; 
+import { getTransaction, readProduct } from "@/app/actions/index"; 
 import EmphyState from "../components/EmphyState"; 
 import TransactionComponent from "../components/TransactionComponent"; 
 import { ListRestart } from "lucide-react";

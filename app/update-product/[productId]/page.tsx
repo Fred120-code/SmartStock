@@ -2,7 +2,7 @@
 import { useUser } from "@clerk/nextjs";
 import { FormDataType, Product } from "@/types";
 import React, { useEffect, useState } from "react";
-import { readProductById, updateProduct } from "@/app/actions";
+import { readProductById, updateProduct } from "@/app/actions/index";
 import Wrapper from "@/app/components/Wrapper";
 import ProductImage from "@/app/components/ProductImage";
 import { FileImage } from "lucide-react";

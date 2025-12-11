@@ -4,7 +4,7 @@ import Wrapper from "../components/Wrapper";
 import { useUser } from "@clerk/nextjs"; // Hook pour récupérer l'utilisateur connecté
 import { Category } from "@prisma/client"; 
 import { FormDataType } from "@/types"; // Type pour les données du formulaire produit
-import { createProduct, readCeategory } from "../actions"; // Actions pour créer un produit et lire les catégories
+import { createProduct, readCeategory } from "@/app/actions/index"; // Actions pour créer un produit et lire les catégories
 import { FileImage } from "lucide-react"; 
 import ProductImage from "../components/ProductImage"; 
 import { toast } from "react-toastify"; 

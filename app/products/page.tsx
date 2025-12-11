@@ -3,15 +3,19 @@
 
 // Import des hooks et composants nécessaires
 import React, { useEffect, useState } from "react";
-import Wrapper from "../components/Wrapper"; // Habillage global (navbar, notifications...)
-import { useUser } from "@clerk/nextjs"; // Récupération de l'utilisateur connecté
-import { Product } from "@/types"; // Type du produit (doit contenir id, name, ...)
-import { deleteProduct, readProduct } from "../actions"; // Fonctions pour lire et supprimer les produits
-import EmphyState from "../components/EmphyState"; // Affichage d'un état vide
-import ProductImage from "../components/ProductImage"; // Affichage stylisé de l'image produit
-import Link from "next/link"; // Pour la navigation vers la page de modification
 import { Trash } from "lucide-react"; // Icône de poubelle
 import { toast } from "react-toastify"; // Notifications toast
+
+import Wrapper from "../components/Wrapper"; // Habillage global (navbar, notifications...)
+import EmphyState from "../components/EmphyState"; // Affichage d'un état vide
+import ProductImage from "../components/ProductImage"; // Affichage stylisé de l'image produit
+
+import { useUser } from "@clerk/nextjs"; // Récupération de l'utilisateur connecté
+import Link from "next/link"; // Pour la navigation vers la page de modification
+
+import { Product } from "@/types"; // Type du produit (doit contenir id, name, ...)
+
+import { deleteProduct, readProduct } from "@/app/actions/index"; // Fonctions pour lire et supprimer les produits
 
 const page = () => {
   // Récupère l'utilisateur connecté via Clerk et son email principal
@@ -20,6 +24,8 @@ const page = () => {
 
   // State pour stocker la liste des produits récupérés
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedProductId, setSelectedProductId] = useState<string[]>([]);
 
   /**
    * Fonction pour charger les produits de l'utilisateur connecté
@@ -28,7 +34,11 @@ const page = () => {
   const fetchProduct = async () => {
     try {
       if (email) {
-        const products = await readProduct(email);
+        const products = await readProduct(
+          email,
+          searchQuery,
+          selectedProductId
+        );
         if (products) {
           setProducts(products);
         }
@@ -45,6 +55,13 @@ const page = () => {
       fetchProduct();
     }
   }, [email]);
+
+  // Declenche la recherche quand searchQuery ou selectedProductId change
+  useEffect(() => {
+    if (email && (searchQuery || selectedProductId.length > 0)) {
+      fetchProduct();
+    }
+  }, [searchQuery, selectedProductId, email]);
 
   /**
    * Fonction pour supprimer un produit (et son image associée)
@@ -90,6 +107,25 @@ const page = () => {
     <div>
       <Wrapper>
         <div className="overflow-x-auto">
+          <div className="flex gap-2 m-4 items-center">
+            <input
+              type="text"
+              placeholder="rechercher un produit"
+              className="input w-[50%]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+              className="btn btn-primary rounded-lg"
+              onClick={() => {
+                setSelectedProductId([]);
+                setSearchQuery("");
+                fetchProduct();
+              }}
+            >
+              Liste Complète
+            </button>
+          </div>
           {/* Si aucun produit, affiche un état vide */}
           {products.length === 0 ? (
             <div>

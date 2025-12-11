@@ -4,12 +4,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model Association {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  id          String        @id @default(uuid())
   name        String
   email       String        @unique
 
@@ -19,61 +19,53 @@ model Association {
 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-
-  @@map("associations")
 }
 
 model Category {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  id            String       @id @default(uuid())
   name          String
   description   String?
   
   association   Association? @relation(fields: [associationId], references: [id])
-  associationId String? @db.ObjectId
+  associationId String?
 
   products      Product[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
-  @@map("categories")
 }
 
 model Product {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  id            String       @id @default(uuid())
   name          String
-  quantity      Int           @default(0)
+  quantity      Int       @default(0)
   description   String
   price         Float
   unit          String
   imageUrl      String
 
-  category      Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId    String        @db.ObjectId
+  category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId    String
 
   association   Association? @relation(fields: [associationId], references: [id])
-  associationId String?        @db.ObjectId
+  associationId String?
 
   transactions  Transaction[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
-  @@map("products")
 }
 
 model Transaction {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  id            String       @id @default(uuid())
   type          String
   quantity      Int
 
-  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId     String        @db.ObjectId
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId     String
 
   association   Association? @relation(fields: [associationId], references: [id])
-  associationId String?        @db.ObjectId
+  associationId String?
 
   createdAt     DateTime  @default(now())
-
-  @@map("transactions")
 }
