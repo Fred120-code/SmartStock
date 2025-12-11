@@ -10,12 +10,10 @@ import {
   Transaction,
 } from "@/types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { PricingTable } from "@clerk/nextjs";
 import { Category } from "@prisma/client";
-import { exportPages } from "next/dist/export/worker";
+
 
 // fonctions de traitement des associations
-
 /**
  * Vérifie si une association existe pour l'email donné, sinon la crée
  * @param email - L'email de l'utilisateur/association
@@ -180,12 +178,14 @@ export async function readCeategory(
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
+
     // Récupère toutes les catégories liées à cette association
     const categories = await prisma.category.findMany({
       where: { associationId: association.id },
     });
     return categories;
   } catch (error) {
+
     // Log l'erreur en cas d'échec
     console.error("Error creating category:", error);
   }
@@ -199,6 +199,7 @@ export async function readCeategory(
  * @param email - L'email de l'utilisateur/association
  * @returns void (ou log l'erreur en cas d'échec)
  */
+
 export async function createProduct(formData: FormDataType, email: string) {
   try {
     // Déstructure les champs nécessaires depuis le formulaire

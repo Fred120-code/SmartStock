@@ -135,7 +135,6 @@ const page = () => {
                 name="price"
                 placeholder="Prix"
                 className="input input-bordered w-full"
-                value={formData.price}
                 onChange={handleChange}
               />
 
@@ -145,7 +144,6 @@ const page = () => {
                 name="quantity"
                 placeholder="Quantité"
                 className="input input-bordered w-full"
-                value={formData.quantity}
                 onChange={handleChange}
               />
 
@@ -176,7 +174,6 @@ const page = () => {
                 <option value="kg">Kilogramme</option>
                 <option value="l">Litre</option>
                 <option value="m">Metre</option>
-                <option value="h">Heure</option>
                 <option value="pcs">Piece</option>
               </select>
 
