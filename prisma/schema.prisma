@@ -4,14 +4,14 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Association {
-  id          String        @id @default(uuid())
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  email       String     @unique
+  email       String        @unique
 
   categories   Category[]
   products     Product[]
@@ -19,53 +19,61 @@ model Association {
 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+  @@map("associations")
 }
 
 model Category {
-  id            String       @id @default(uuid())
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   description   String?
   
   association   Association? @relation(fields: [associationId], references: [id])
-  associationId String?
+  associationId String? @db.ObjectId
 
   products      Product[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@map("categories")
 }
 
 model Product {
-  id            String       @id @default(uuid())
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
   name          String
-  quantity      Int       @default(0)
+  quantity      Int           @default(0)
   description   String
   price         Float
   unit          String
   imageUrl      String
 
-  category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId    String
+  category      Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId    String        @db.ObjectId
 
   association   Association? @relation(fields: [associationId], references: [id])
-  associationId String?
+  associationId String?        @db.ObjectId
 
   transactions  Transaction[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@map("products")
 }
 
 model Transaction {
-  id            String       @id @default(uuid())
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
   type          String
   quantity      Int
 
-  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId     String
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId     String        @db.ObjectId
 
   association   Association? @relation(fields: [associationId], references: [id])
-  associationId String?
+  associationId String?        @db.ObjectId
 
   createdAt     DateTime  @default(now())
+
+  @@map("transactions")
 }
