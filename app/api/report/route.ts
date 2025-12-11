@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { generateStockReport } from "@/app/actions";
+import { generateStockReport } from "@/app/actions/reports";
 
 export async function GET(request: NextRequest) {
   try {
