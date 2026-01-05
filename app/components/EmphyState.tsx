@@ -1,5 +1,5 @@
 // Composant d'affichage d'un état vide (ex : aucune donnée à afficher)
-import { icons } from "lucide-react";
+import { icons, PackageSearch } from "lucide-react";
 import React, { FC } from "react";
 
 // Props attendues : une icône (par nom) et un message à afficher
@@ -11,7 +11,7 @@ interface EmphyStateProps {
 // Composant principal
 const EmphyState: FC<EmphyStateProps> = ({ IconComponent, message }) => {
   // Sélection dynamique de l'icône à partir de lucide-react
-  const SelectedIcon = icons[IconComponent];
+  const SelectedIcon = icons[IconComponent] || PackageSearch;
   return (
     <div className="w-full h-full  mt-10 flex justify-center items-center flex-col">
       {/* Affichage de l'icône */}

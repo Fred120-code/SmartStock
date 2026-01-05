@@ -13,7 +13,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
   // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
-  
+
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [product, setproduct] = useState<Product | null>(null);
@@ -92,7 +92,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
         try {
           dataDelete = await resDelete.json();
         } catch (err) {
-          console.error(err)
+          console.error(err);
           // Si la réponse n'est pas du JSON, on ignore (l'API est censée toujours renvoyer du JSON maintenant)
         }
         if (!dataDelete.succes) {
@@ -105,7 +105,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
           method: "POST",
           body: imagedata,
         });
-        
+
         let data: { succes: boolean; path?: string } = { succes: false };
         try {
           data = await res.json();
@@ -214,6 +214,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   <option value="Kg">Kilogramme</option>
                   <option value="L">Litre</option>
                   <option value="M">Metre</option>
+                  <option value="P">Piece</option>
                 </select>
 
                 {/* Champ pour uploader une image */}

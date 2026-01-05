@@ -3,12 +3,13 @@
 
 // Import des hooks et composants nécessaires
 import React, { useEffect, useState } from "react";
-import { Trash } from "lucide-react"; // Icône de poubelle
+import { Trash, Settings } from "lucide-react"; // Icônes
 import { toast } from "react-toastify"; // Notifications toast
 
 import Wrapper from "../components/Wrapper"; // Habillage global (navbar, notifications...)
 import EmphyState from "../components/EmphyState"; // Affichage d'un état vide
 import ProductImage from "../components/ProductImage"; // Affichage stylisé de l'image produit
+import AlertSettingsModal from "../components/AlertSettingsModal"; // Modal paramètres d'alerte
 
 import { useUser } from "@clerk/nextjs"; // Récupération de l'utilisateur connecté
 import Link from "next/link"; // Pour la navigation vers la page de modification
@@ -17,7 +18,7 @@ import { Product } from "@/types"; // Type du produit (doit contenir id, name, .
 
 import { deleteProduct, readProduct } from "@/app/actions/index"; // Fonctions pour lire et supprimer les produits
 
-const page = () => {
+const ProductsPage = () => {
   // Récupère l'utilisateur connecté via Clerk et son email principal
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
@@ -184,11 +185,30 @@ const page = () => {
                         Modifier
                       </Link>
                       <button
+                        className="btn btn-xs w-fit btn-warning"
+                        onClick={() => {
+                          const modal = document.getElementById(
+                            `alert_modal_${product.id}`
+                          ) as HTMLDialogElement;
+                          modal?.showModal();
+                        }}
+                        title="Configurer les alertes"
+                      >
+                        <Settings className="w-4 h-4" />
+                      </button>
+                      <button
                         className="btn btn-xs w-fit"
                         onClick={() => handleDeletProduct(product)}
                       >
                         <Trash className="w-4 h-4" />
                       </button>
+                      <AlertSettingsModal
+                        productId={product.id}
+                        productName={product.name}
+                        currentMinQuantity={product.minQuantity}
+                        currentAlertEnabled={product.alertEnabled}
+                        onSave={fetchProduct}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -201,4 +221,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ProductsPage;

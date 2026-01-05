@@ -39,3 +39,12 @@ export {
   getStockSummary,
   generateStockReport,
 } from "./reports";
+
+// === Exports depuis alerts.ts ===
+export {
+  checkAndCreateStockAlerts,
+  getActiveAlerts,
+  resolveAlert,
+  updateProductAlertSettings,
+  getAlertCount,
+} from "./alerts";

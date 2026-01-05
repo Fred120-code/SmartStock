@@ -3,6 +3,7 @@
 // Composant de barre de navigation principal de l'application
 import { UserButton, useUser } from "@clerk/nextjs";
 import {
+  AlertCircle,
   ArrowLeftRight,
   Blocks,
   ChevronRight,
@@ -19,12 +20,17 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { checkAndAddAssociation } from "../actions";
+import { checkAndAddAssociation, getAlertCount } from "../actions";
 import Stock from "./Stock";
 
 const NavBar = () => {
   // Récupération de l'utilisateur connecté
   const { user } = useUser();
+  const email = user?.primaryEmailAddress?.emailAddress as string;
+
+  // État pour afficher/masquer les labels sur mobile (icônes-only par défaut)
+  const [showMobileLabels, setShowMobileLabels] = useState(false);
+  const [alertCount, setAlertCount] = useState(0);
 
   // Ajoute l'utilisateur à l'association s'il est connecté
   useEffect(() => {
@@ -35,6 +41,29 @@ const NavBar = () => {
       );
     }
   }, [user]);
+
+  // Récupère le nombre d'alertes actives
+  useEffect(() => {
+    const fetchAlertCount = async () => {
+      try {
+        if (email) {
+          const count = await getAlertCount(email);
+          setAlertCount(count);
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération du nombre d'alertes:",
+          error
+        );
+      }
+    };
+
+    fetchAlertCount();
+    // Actualise le nombre d'alertes toutes les 30 secondes
+    const interval = setInterval(fetchAlertCount, 30000);
+
+    return () => clearInterval(interval);
+  }, [email]);
 
   // Tableau contenant les liens de navigation de la navbar
   const navLinks = [
@@ -68,11 +97,13 @@ const NavBar = () => {
       label: "Transactions",
       icon: ArrowLeftRight,
     },
+    {
+      href: "/alerts",
+      label: "Alertes",
+      icon: AlertCircle,
+      badge: alertCount > 0 ? alertCount : null,
+    },
   ];
-
-
-  // État pour afficher/masquer les labels sur mobile (icônes-only par défaut)
-  const [showMobileLabels, setShowMobileLabels] = useState(false);
 
   // Permet de récupérer le chemin de la page courante
   const pathname = usePathname();
@@ -81,7 +112,7 @@ const NavBar = () => {
   const renderLinks = () => {
     return (
       <div className="flex flex-col justify-center gap-9 items-start">
-        {navLinks.map(({ href, label, icon: Icon }) => {
+        {navLinks.map(({ href, label, icon: Icon, badge }) => {
           const isActive = pathname === href;
           const activeClass = isActive ? "btn-primary" : "btn-ghost";
 
@@ -89,10 +120,15 @@ const NavBar = () => {
             <Link
               href={href}
               key={href}
-              className={`btn ${activeClass} btn-sm flex gap-2 items-center rounded-lg`}
+              className={`btn ${activeClass} btn-sm flex gap-2 items-center rounded-lg relative`}
             >
               <Icon className="w-4 h-4" />
               {label}
+              {badge && (
+                <span className="badge badge-warning badge-sm absolute -top-2 -right-2">
+                  {badge}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -146,22 +182,26 @@ const NavBar = () => {
 
         {/* Mobile: icônes seulement avec option d'afficher les labels via le bouton '->' */}
         <div className="flex flex-col items-center gap-6 sm:hidden">
-          {navLinks.map(({ href, label, icon: Icon }) => {
+          {navLinks.map(({ href, label, icon: Icon, badge }) => {
             const isActive = pathname === href;
             const activeClass = isActive ? "btn-primary" : "btn-ghost";
             return (
-              <div 
-                className=" tooltip tooltip-primary" 
-                data-tip= {label} 
+              <div
+                className=" tooltip tooltip-primary"
+                data-tip={label}
                 key={label}
-                
               >
                 <Link
                   href={href}
                   key={href}
-                  className={`btn ${activeClass} btn-sm flex flex-col items-center justify-center rounded-lg p-2`}
+                  className={`btn ${activeClass} btn-sm flex flex-col items-center justify-center rounded-lg p-2 relative`}
                 >
                   <Icon className="w-5 h-5" />
+                  {badge && (
+                    <span className="badge badge-warning badge-xs absolute -top-1 -right-1">
+                      {badge}
+                    </span>
+                  )}
                   {/* Label masqué par défaut sur mobile, visible si showMobileLabels=true */}
                   <span
                     className={`ml-2 transition-all text-center duration-300 text-[11px] ${
@@ -185,7 +225,9 @@ const NavBar = () => {
           >
             <PackagePlus className="h-4 w-4" />
             <span
-              className={`ml-2 text-[10px] sm:text-xl ${showMobileLabels ? "inline-block" : "hidden"}`}
+              className={`ml-2 text-[10px] sm:text-xl ${
+                showMobileLabels ? "inline-block" : "hidden"
+              }`}
             >
               Alimenter
             </span>
@@ -198,7 +240,7 @@ const NavBar = () => {
           >
             {/* Utilisation d'une flèche simple pour indiquer le toggle */}
             <span className="text-lg">
-              <ChevronRight className="w-4 h-4"/>
+              <ChevronRight className="w-4 h-4" />
             </span>
           </button>
         </div>

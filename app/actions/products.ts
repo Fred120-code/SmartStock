@@ -12,41 +12,35 @@ import { getAssociation } from "./associations";
  */
 export async function createProduct(formData: FormDataType, email: string) {
   try {
-    // Déstructure les champs nécessaires depuis le formulaire
     const { name, description, price, imageUrl, categoryId, unit, quantity } =
       formData;
 
-    // Vérifie la présence des champs obligatoires
     if (!email || !price || !categoryId) {
       throw new Error("l'email, le nom, le prix et la category sont requis.");
     }
 
-    // Définit des valeurs par défaut pour les champs optionnels
     const safeImageUrl = imageUrl || ""; // Si aucune image n'est fournie, chaîne vide
     const safeUnit = unit || ""; // Si aucune unité n'est fournie, chaîne vide
 
-    // Récupère l'association liée à l'email
     const association = await getAssociation(email);
 
-    // Si aucune association n'est trouvée, on lève une erreur
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
-    // Création du produit dans la base de données avec toutes les informations
+
     await prisma.product.create({
       data: {
-        name, // Nom du produit
-        description, // Description du produit
-        price: Number(price), // Prix converti en nombre
-        imageUrl: safeImageUrl, // URL de l'image (ou vide)
-        categoryId, // ID de la catégorie associée
-        unit: safeUnit, // Unité de mesure (ou vide)
-        associationId: association.id, // ID de l'association propriétaire
-        quantity: Number(quantity), // Quantité initiale convertie en nombre
+        name, 
+        description, 
+        price: Number(price), 
+        imageUrl: safeImageUrl, 
+        categoryId, 
+        unit: safeUnit, 
+        associationId: association.id, 
+        quantity: Number(quantity),
       },
     });
   } catch (error) {
-    // Log l'erreur en cas d'échec de la création
     console.error("Error creating product:", error);
   }
 }
@@ -235,7 +229,6 @@ export async function readProductById(
       categoryName: product.category?.name,
     };
   } catch (error) {
-    // Log l'erreur en cas d'échec de la récupération
     console.error("Error reading product by id:", error);
   }
 }

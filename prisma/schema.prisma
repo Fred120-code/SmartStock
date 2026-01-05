@@ -16,6 +16,7 @@ model Association {
   categories   Category[]
   products     Product[]
   transactions Transaction[]
+  alerts       StockAlert[]
 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -43,6 +44,8 @@ model Product {
   price         Float
   unit          String
   imageUrl      String
+  minQuantity   Int       @default(0)
+  alertEnabled  Boolean   @default(true)
 
   category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId    String
@@ -51,6 +54,7 @@ model Product {
   associationId String?
 
   transactions  Transaction[]
+  alerts        StockAlert[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -68,4 +72,19 @@ model Transaction {
   associationId String?
 
   createdAt     DateTime  @default(now())
+}
+
+model StockAlert {
+  id            String       @id @default(uuid())
+  status        String       @default("active") // "active" ou "resolved"
+  message       String
+
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId     String
+
+  association   Association? @relation(fields: [associationId], references: [id])
+  associationId String?
+
+  createdAt     DateTime  @default(now())
+  resolvedAt    DateTime?
 }
