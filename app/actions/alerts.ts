@@ -1,10 +1,5 @@
 "use server";
 
-/**
- * Fichier contenant les actions pour la gestion des alertes de stock
- * Permet de vérifier, créer et gérer les alertes de stock faible
- */
-
 import { prisma } from "@/lib/prisma";
 
 /**
