@@ -19,8 +19,8 @@ export async function createProduct(formData: FormDataType, email: string) {
       throw new Error("l'email, le nom, le prix et la category sont requis.");
     }
 
-    const safeImageUrl = imageUrl || ""; // Si aucune image n'est fournie, chaîne vide
-    const safeUnit = unit || ""; // Si aucune unité n'est fournie, chaîne vide
+    const safeImageUrl = imageUrl || "";
+    const safeUnit = unit || ""; 
 
     const association = await getAssociation(email);
 
@@ -53,7 +53,6 @@ export async function createProduct(formData: FormDataType, email: string) {
  */
 export async function updateProduct(formData: FormDataType, email: string) {
   try {
-    // Déstructure tous les champs nécessaires depuis le formulaire
     const {
       id,
       name,
@@ -65,36 +64,31 @@ export async function updateProduct(formData: FormDataType, email: string) {
       unit,
     } = formData;
 
-    // Vérifie la présence des champs obligatoires
     if (!email || !price || !id) {
       throw new Error("l'email, le nom, le prix et la category sont requis.");
     }
 
-    // Récupère l'association liée à l'email
     const association = await getAssociation(email);
 
-    // Si aucune association n'est trouvée, on lève une erreur
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
-    // Met à jour le produit dans la base de données avec toutes les nouvelles informations
     await prisma.product.update({
       where: {
-        id: id, // ID du produit à mettre à jour
-        associationId: association.id, // ID de l'association propriétaire (sécurité)
+        id: id, 
+        associationId: association.id, 
       },
       data: {
-        name, // Nouveau nom du produit
-        description, // Nouvelle description
-        price: Number(price), // Nouveau prix converti en nombre
-        imageUrl: imageUrl, // Nouvelle image (ou inchangée)
-        quantity: Number(quantity), // Nouvelle quantité
-        categoryId, // Nouvelle catégorie
-        unit: unit || "", // Nouvelle unité (ou vide)
+        name, 
+        description, 
+        price: Number(price),
+        imageUrl: imageUrl, 
+        quantity: Number(quantity), 
+        categoryId, 
+        unit: unit || "", 
       },
     });
   } catch (error) {
-    // Log l'erreur en cas d'échec de la mise à jour
     console.error("Error updating product:", error);
   }
 }
@@ -176,7 +170,7 @@ export async function readProduct(
     // Pour chaque produit, on ajoute le nom de la catégorie (categoryName) pour simplifier l'affichage côté front
     return filteredProducts.map((product) => ({
       ...product,
-      categoryName: product.category?.name, // Ajoute le nom de la catégorie si elle existe
+      categoryName: product.category?.name,
     }));
   } catch (error) {
     console.error("Error reading products:", error);
@@ -194,31 +188,26 @@ export async function readProductById(
   email: string
 ): Promise<Product | undefined> {
   try {
-    // Vérifie la présence de l'email
     if (!email) {
       throw new Error("l'email est requis.");
     }
 
-    // Récupère l'association liée à l'email
     const association = await getAssociation(email);
 
-    // Si aucune association n'est trouvée, on lève une erreur
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
 
-    // Recherche le produit par son ID et l'association, inclut la catégorie associée
     const product = await prisma.product.findUnique({
       where: {
-        id: productId, // ID du produit recherché
-        associationId: association.id, // Sécurité : doit appartenir à l'association
+        id: productId, 
+        associationId: association.id, 
       },
       include: {
-        category: true, // Inclut les infos de la catégorie liée
+        category: true,
       },
     });
 
-    // Si aucun produit n'est trouvé, retourne undefined
     if (!product) {
       return undefined;
     }
