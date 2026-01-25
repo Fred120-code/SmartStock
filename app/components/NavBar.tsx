@@ -33,7 +33,7 @@ const NavBar = () => {
     if (user?.primaryEmailAddress?.emailAddress && user.fullName) {
       checkAndAddAssociation(
         user?.primaryEmailAddress?.emailAddress,
-        user.fullName
+        user.fullName,
       );
     }
   }, [user]);
@@ -49,7 +49,7 @@ const NavBar = () => {
       } catch (error) {
         console.error(
           "Erreur lors de la récupération du nombre d'alertes:",
-          error
+          error,
         );
       }
     };
@@ -154,7 +154,6 @@ const NavBar = () => {
             SmartStock
           </span>
         </div>
-  
 
         {/* Liens de navigation (desktop) + bouton utilisateur */}
         <div className="hidden space-x-2 sm:flex items-center flex-col justify-between gap-10">

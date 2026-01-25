@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 import Wrapper from "../components/Wrapper";
 import EmphyState from "../components/EmphyState";
@@ -51,7 +51,10 @@ const AlertsPage = () => {
         const data = await getActiveAlerts(email);
         const formattedAlerts = data.map((alert) => ({
           ...alert,
-          createdAt: alert.createdAt instanceof Date ? alert.createdAt.toISOString() : alert.createdAt,
+          createdAt:
+            alert.createdAt instanceof Date
+              ? alert.createdAt.toISOString()
+              : alert.createdAt,
         }));
         setAlerts(formattedAlerts);
       }
@@ -90,10 +93,7 @@ const AlertsPage = () => {
             <span className="loading loading-spinner loading-lg"></span>
           </div>
         ) : alerts.length === 0 ? (
-          <EmphyState
-            message="Aucune alerte Stock"
-            IconComponent="Check"
-          />
+          <EmphyState message="Aucune alerte Stock" IconComponent="Check" />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {alerts.map((alert) => (

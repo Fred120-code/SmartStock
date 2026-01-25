@@ -41,7 +41,6 @@ export {
 export {
   checkAndCreateStockAlerts,
   getActiveAlerts,
-  resolveAlert,
   updateProductAlertSettings,
   getAlertCount,
 } from "./alerts";
