@@ -18,18 +18,18 @@ const StockSummaryTable = ({ email }: { email: string }) => {
         }
       }
     } catch (error) {
-      // Affiche l'erreur en cas d'échec
       console.error(error);
     }
   };
 
-  // Charge les produits au chargement de la page ou lors d'un changement d'email utilisateur
   useEffect(() => {
     if (email) {
       fetchSumary();
     }
   }, [email]);
 
+
+  
   if (!data) {
     return (
       <div className="flex justify-center items-center w-full">
@@ -37,6 +37,8 @@ const StockSummaryTable = ({ email }: { email: string }) => {
       </div>
     );
   }
+
+
   return (
     <div className="w-full">
       <ul className="list bg-primary/20 rounded-box shadow-md">

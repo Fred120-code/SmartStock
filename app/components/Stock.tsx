@@ -6,13 +6,10 @@ import ProductComponent from "./ProductComponent";
 import { toast } from "react-toastify";
 
 const Stock = () => {
-  // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
-  // State pour stocker la liste des produits récupérés
   const [products, setProducts] = useState<Product[]>([]);
-
   const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -30,23 +27,23 @@ const Stock = () => {
         }
       }
     } catch (error) {
-      // Affiche l'erreur en cas d'échec
       console.error(error);
     }
   };
 
-  // Charge les produits au chargement de la page ou lors d'un changement d'email utilisateur
   useEffect(() => {
     if (email) {
       fetchProduct();
     }
   }, [email]);
 
+
   const handleProductChange = (productId: string) => {
     const product = products.find((p) => p.id === productId);
     setSelectedProduct(product || null);
     setSelectedProductId(productId);
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,12 +71,9 @@ const Stock = () => {
   };
   return (
     <div>
-      {/* You can open the modal using document.getElementById('ID').showModal() method */}
-
       <dialog id="my_modal_stock" className="modal">
         <div className="modal-box">
           <form method="dialog">
-            {/* if there is a button in form, it will close the modal */}
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>

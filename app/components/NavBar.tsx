@@ -1,6 +1,5 @@
 "use client";
 
-// Composant de barre de navigation principal de l'application
 import { UserButton, useUser } from "@clerk/nextjs";
 import {
   AlertCircle,
@@ -24,15 +23,12 @@ import { checkAndAddAssociation, getAlertCount } from "../actions";
 import Stock from "./Stock";
 
 const NavBar = () => {
-  // Récupération de l'utilisateur connecté
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
-  // État pour afficher/masquer les labels sur mobile (icônes-only par défaut)
   const [showMobileLabels, setShowMobileLabels] = useState(false);
   const [alertCount, setAlertCount] = useState(0);
 
-  // Ajoute l'utilisateur à l'association s'il est connecté
   useEffect(() => {
     if (user?.primaryEmailAddress?.emailAddress && user.fullName) {
       checkAndAddAssociation(
@@ -65,7 +61,6 @@ const NavBar = () => {
     return () => clearInterval(interval);
   }, [email]);
 
-  // Tableau contenant les liens de navigation de la navbar
   const navLinks = [
     {
       href: "/",
@@ -105,7 +100,6 @@ const NavBar = () => {
     },
   ];
 
-  // Permet de récupérer le chemin de la page courante
   const pathname = usePathname();
 
   // Fonction pour afficher dynamiquement les liens de navigation
@@ -156,23 +150,11 @@ const NavBar = () => {
           <div className="p-2">
             <Blocks className="w-6 h-6 text-primary" />
           </div>
-          {/*
-            Le titre est caché sur petits écrans (mobile) et visible à partir de la
-            taille `md` (tablette/desktop). On utilise `hidden md:inline-block`
-            pour que l'élément ne prenne pas d'espace sur mobile.
-          */}
           <span className="font-bold text-xl hidden md:inline-block">
             SmartStock
           </span>
         </div>
-
-        {/* Bouton menu mobile */}
-        {/* <button
-          className="btn w-fit sm:hidden btn-sm rounded-md"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <Menu className="w-4 h-4" />
-        </button> */}
+  
 
         {/* Liens de navigation (desktop) + bouton utilisateur */}
         <div className="hidden space-x-2 sm:flex items-center flex-col justify-between gap-10">

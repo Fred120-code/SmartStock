@@ -19,7 +19,6 @@ const ProductOverview = ({email}: {email:string}) => {
             }
           }
         } catch (error) {
-          // Affiche l'erreur en cas d'échec
           console.error(error);
         }
       };
@@ -32,7 +31,6 @@ const ProductOverview = ({email}: {email:string}) => {
         return value.toFixed(1);
       }
 
-      // Charge les produits au chargement de la page ou lors d'un changement d'email utilisateur
       useEffect(() => {
         if (email) {
           fetchProduct();

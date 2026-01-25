@@ -16,13 +16,9 @@ import EmphyState from "./EmphyState";
 const CategoryChart = ({ email }: { email: string }) => {
   const [data, setData] = useState<ChartData[]>([]);
   const COLOR = {
-    default: "#5B63F6", // fallback couleur harmonisée bleu-violet
+    default: "#5B63F6",
   };
 
-  /**
-   * Fonction pour charger les produits de l'utilisateur connecté
-   * Appelle l'action readProduct côté serveur, puis met à jour le state
-   */
   const fetchProduct = async () => {
     try {
       if (email) {
@@ -32,12 +28,10 @@ const CategoryChart = ({ email }: { email: string }) => {
         }
       }
     } catch (error) {
-      // Affiche l'erreur en cas d'échec
       console.error(error);
     }
   };
 
-  // Charge les produits au chargement de la page ou lors d'un changement d'email utilisateur
   useEffect(() => {
     if (email) {
       fetchProduct();
@@ -69,7 +63,7 @@ const CategoryChart = ({ email }: { email: string }) => {
         <YAxis hide />
         <Legend iconType="line" />
         <Tooltip />
-        {/* Définition du dégradé SVG (bleu moderne -> violet moderne) */}
+
         <defs>
           <linearGradient id="gradBlueViolet" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" stopColor="#FFFFFF" />
@@ -85,19 +79,16 @@ const CategoryChart = ({ email }: { email: string }) => {
           stroke="#6D0076"
         >
           {data.map((entry, index) => (
-            // Utilise le dégradé SVG via url(#gradBlueViolet). Si le navigateur ne supporte pas,
-            // la couleur fallback dans `COLOR.default` sera utilisée.
             <Cell
               key={`cell=${index}`}
               cursor="default"
               fill={`url(#gradBlueViolet)`}
-              // aria-description utile pour accessibilité si nécessaire
               aria-label={`${entry.name}: ${entry.value}`}
             />
           ))}
         </Bar>
       </BarChart>
-    </ResponsiveContainer> 
+    </ResponsiveContainer>
   );
 
   if (data.length == 0) {
