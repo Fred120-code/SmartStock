@@ -1,6 +1,3 @@
-// Fichier d'export centralisé pour compatibilité avec les imports existants
-// Tous les imports du projet qui utilisaient `import { ... } from "../actions"`
-// continueront de fonctionner grâce à ce fichier.
 
 // === Exports depuis associations.ts ===
 export { checkAndAddAssociation, getAssociation } from "./associations";

@@ -14,7 +14,6 @@ import Wrapper from "../components/Wrapper";
 import EmphyState from "../components/EmphyState";
 import {
   getActiveAlerts,
-  resolveAlert,
   checkAndCreateStockAlerts,
 } from "@/app/actions/index";
 
@@ -68,20 +67,6 @@ const AlertsPage = () => {
   useEffect(() => {
     fetchAlerts();
   }, [email]);
-
-  /**
-   * Résout une alerte
-   */
-  const handleResolveAlert = async (alertId: string) => {
-    try {
-      await resolveAlert(alertId);
-      toast.success("Alerte résolue");
-      fetchAlerts();
-    } catch (error) {
-      console.error("Erreur lors de la résolution de l'alerte:", error);
-      toast.error("Erreur lors de la résolution");
-    }
-  };
 
   return (
     <Wrapper>
@@ -161,13 +146,6 @@ const AlertsPage = () => {
                     >
                       Réapprovisionner
                     </a>
-                    <button
-                      className="btn btn-sm btn-success"
-                      onClick={() => handleResolveAlert(alert.id)}
-                    >
-                      <CheckCircle className="w-4 h-4" />
-                      Résoudre
-                    </button>
                   </div>
                 </div>
               </div>

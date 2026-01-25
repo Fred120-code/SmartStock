@@ -122,31 +122,6 @@ export async function getActiveAlerts(email: string) {
   }
 }
 
-/**
- * Résout une alerte (marque comme résolue)
- *
- * @param alertId - ID de l'alerte à résoudre
- * @returns L'alerte résolue
- */
-export async function resolveAlert(alertId: string) {
-  try {
-    const alert = await prisma.stockAlert.update({
-      where: { id: alertId },
-      data: {
-        status: "resolved",
-        resolvedAt: new Date(),
-      },
-      include: {
-        product: true,
-      },
-    });
-
-    return alert;
-  } catch (error) {
-    console.error("Erreur lors de la résolution de l'alerte:", error);
-    throw error;
-  }
-}
 
 /**
  * Met à jour les paramètres d'alerte d'un produit
