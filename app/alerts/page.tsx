@@ -102,7 +102,6 @@ const AlertsPage = () => {
                 className="card bg-warning/10 border-2 border-warning"
               >
                 <div className="card-body">
-                  {/* Titre avec icône */}
                   <div className="flex items-start justify-between">
                     <div>
                       <h2 className="card-title text-lg">
@@ -115,7 +114,6 @@ const AlertsPage = () => {
                     <AlertCircle className="w-6 h-6 text-warning flex-shrink-0" />
                   </div>
 
-                  {/* Infos stock */}
                   <div className="divider my-2"></div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
@@ -132,13 +130,11 @@ const AlertsPage = () => {
                     </div>
                   </div>
 
-                  {/* Date d'alerte */}
                   <p className="text-xs text-gray-500 mt-2">
                     Alerte depuis:{" "}
                     {new Date(alert.createdAt).toLocaleDateString("fr-FR")}
                   </p>
 
-                  {/* Actions */}
                   <div className="card-actions justify-end mt-4">
                     <a
                       href={`/update-product/${alert.product.id}`}
