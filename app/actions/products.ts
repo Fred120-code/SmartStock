@@ -6,9 +6,9 @@ import { getAssociation } from "./associations";
 
 /**
  * Crée un nouveau produit pour une association donnée dans la base de données.
- * @param formData - Les données du formulaire du produit (nom, description, prix, image, catégorie, unité, quantité)
- * @param email - L'email de l'utilisateur/association
- * @returns void (ou log l'erreur en cas d'échec)
+ * @param formData 
+ * @param email 
+ * @returns 
  */
 export async function createProduct(formData: FormDataType, email: string) {
   try {
@@ -47,9 +47,9 @@ export async function createProduct(formData: FormDataType, email: string) {
 
 /**
  * Met à jour un produit existant pour une association donnée dans la base de données.
- * @param formData - Les données du formulaire du produit (id, nom, description, prix, image)
- * @param email - L'email de l'utilisateur/association
- * @returns void (ou log l'erreur en cas d'échec)
+ * @param formData 
+ * @param email 
+ * @returns 
  */
 export async function updateProduct(formData: FormDataType, email: string) {
   try {
@@ -95,8 +95,8 @@ export async function updateProduct(formData: FormDataType, email: string) {
 
 /**
  * Supprime un produit pour une association donnée
- * @param id - L'identifiant du produit à supprimer
- * @param email - L'email de l'utilisateur/association
+ * @param id 
+ * @param email
  */
 export async function deleteProduct(id: string, email: string) {
   try {
@@ -122,8 +122,8 @@ export async function deleteProduct(id: string, email: string) {
 
 /**
  * Récupère tous les produits d'une association donnée.
- * @param email - L'email de l'utilisateur/association
- * @returns Un tableau de produits enrichis du nom de leur catégorie, ou undefined en cas d'erreur
+ * @param email 
+ * @returns 
  */
 export async function readProduct(
   email: string,
@@ -140,12 +140,10 @@ export async function readProduct(
       throw new Error("Aucune association trouvée avec cet email.");
     }
 
-    // Constructeur de filtre dynamique
     const where: any = {
       associationId: association.id,
     };
 
-    // Ajoute le filtre pour exclure les produits selectionnés
     if (selectedProductId && selectedProductId.length > 0) {
       where.id = {
         notIn: selectedProductId,
@@ -179,9 +177,9 @@ export async function readProduct(
 
 /**
  * Récupère un produit précis par son identifiant pour une association donnée.
- * @param productId - L'identifiant du produit à récupérer
- * @param email - L'email de l'utilisateur/association
- * @returns Le produit trouvé enrichi du nom de la catégorie, ou undefined en cas d'erreur ou si non trouvé
+ * @param productId 
+ * @param email 
+ * @returns 
  */
 export async function readProductById(
   productId: string,

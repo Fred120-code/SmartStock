@@ -7,30 +7,26 @@ import { getAssociation } from "./associations";
 
 /**
  * Récupère les statistiques globales d'une association
- * @param email - L'email de l'utilisateur/association
- * @returns Objet avec nombre de produits, catégories, transactions et valeur du stock
+ * @param email 
+ * @returns 
  */
 export async function getProductOverviewStats(
   email: string
 ): Promise<ProductOverviewStat> {
   try {
-    // Vérifie la présence de l'email
     if (!email) {
       throw new Error("l'email est requis.");
     }
 
-    // Récupère l'association liée à l'email
     const association = await getAssociation(email);
 
-    // Si aucune association n'est trouvée, on lève une erreur
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
 
-    // Recherche tous les produits liés à l'association
     const products = await prisma.product.findMany({
       where: {
-        associationId: association.id, // Sécurité : doit appartenir à l'association
+        associationId: association.id, 
       },
       orderBy: {
         createdAt: "desc",
@@ -40,24 +36,22 @@ export async function getProductOverviewStats(
       },
     });
 
-    // Récupère toutes les transactions liées à l'association
     const transactions = await prisma.transaction.findMany({
       where: {
-        associationId: association.id, // Sécurité : doit appartenir à l'association
+        associationId: association.id,
       },
     });
 
-    // Liste les catégories et supprime les doublons
     const categorieSet = new Set(
       products.map((product) => product.category.name)
     );
 
-    const totalProducts = products.length; // Calcul le nombre de produits
-    const totalCategories = categorieSet.size; // Calcul le nombre de catégories
-    const totalTransaction = transactions.length; // Calcul le nombre de transactions
+    const totalProducts = products.length; 
+    const totalCategories = categorieSet.size;
+    const totalTransaction = transactions.length; 
     const stockValue = products.reduce((acc, product) => {
       return acc + product.price * product.quantity;
-    }, 0); // Permet de trouver la valeur du stock
+    }, 0); 
 
     return {
       totalProducts,
@@ -66,7 +60,6 @@ export async function getProductOverviewStats(
       stockValue,
     };
   } catch (error) {
-    // Log l'erreur en cas d'échec de la récupération
     console.error("Error getting product overview stats:", error);
     return {
       totalProducts: 0,
@@ -79,30 +72,26 @@ export async function getProductOverviewStats(
 
 /**
  * Récupère la distribution des produits par catégorie (top 5)
- * @param email - L'email de l'utilisateur/association
- * @returns Tableau de catégories avec nombre de produits (top 5)
+ * @param email 
+ * @returns 
  */
 export async function getProductCategoryDistribution(email: string) {
   try {
-    // Vérifie la présence de l'email
     if (!email) {
       throw new Error("l'email est requis.");
     }
 
-    // Récupère l'association liée à l'email
     const association = await getAssociation(email);
 
-    // Si aucune association n'est trouvée, on lève une erreur
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
 
-    const R = 5; // Limite des résultats à 5
+    const R = 5; 
 
-    // Recherche les catégories avec le nombre de produits pour chaque
     const categoryWithProductCount = await prisma.category.findMany({
       where: {
-        associationId: association.id, // Sécurité : doit appartenir à l'association
+        associationId: association.id,
       },
       include: {
         products: {
@@ -113,43 +102,37 @@ export async function getProductCategoryDistribution(email: string) {
       },
     });
 
-    // Transforme les données pour affichage dans un chart
     const data = categoryWithProductCount
       .map((category) => ({
         name: category.name,
         value: category.products.length,
       }))
-      .sort((a, b) => b.value - a.value) // Tri décroissant
-      .slice(0, R); // Limite aux R premiers
+      .sort((a, b) => b.value - a.value) 
+      .slice(0, R); 
 
     return data;
   } catch (error) {
-    // Log l'erreur en cas d'échec de la récupération
     console.error("Error getting product category distribution:", error);
   }
 }
 
 /**
  * Récupère un résumé du stock (en stock, stock faible, rupture, produits critiques)
- * @param email - L'email de l'utilisateur/association
- * @returns Objet avec comptes et liste des produits critiques
+ * @param email 
+ * @returns 
  */
 export async function getStockSummary(email: string): Promise<StockSummary> {
   try {
-    // Vérifie la présence de l'email
     if (!email) {
       throw new Error("l'email est requis.");
     }
 
-    // Récupère l'association liée à l'email
     const association = await getAssociation(email);
 
-    // Si aucune association n'est trouvée, on lève une erreur
     if (!association) {
       throw new Error("Aucune association trouvée avec cet email.");
     }
 
-    // Récupère tous les produits de l'association
     const allProducts = await prisma.product.findMany({
       where: {
         associationId: association.id,
@@ -177,7 +160,6 @@ export async function getStockSummary(email: string): Promise<StockSummary> {
       })),
     };
   } catch (error) {
-    // Log l'erreur en cas d'échec de la récupération
     console.error("Error getting stock summary:", error);
     return {
       inStockCount: 0,
@@ -190,17 +172,14 @@ export async function getStockSummary(email: string): Promise<StockSummary> {
 
 /**
  * Génère un rapport intelligent sur le stock via l'API Gemini
- * @param email - L'email de l'utilisateur/association
- * @returns Texte du rapport ou message d'erreur
+ * @param email 
+ * @returns 
  */
 export async function generateStockReport(email: string) {
   try {
-    // Récupérer les stats depuis la BDD
     const stats = await getStockSummary(email);
 
-    // Vérifier qu'on a une clé API
     if (!process.env.GEMINI_API_KEY) {
-      // Retourne un message lisible au front plutôt qu'une exception brute
       return `Clé API Gemini manquante (GEMINI_API_KEY). Impossible de générer le rapport.`;
     }
 
