@@ -157,7 +157,6 @@ export async function updateProductAlertSettings(
 
 /**
  * Compte le nombre d'alertes actives pour une association
- *
  * @param email - Email de l'association
  * @returns Nombre d'alertes actives
  */

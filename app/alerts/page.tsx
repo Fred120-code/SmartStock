@@ -1,10 +1,5 @@
 "use client";
 
-/**
- * Page de gestion des alertes de stock
- * Affiche toutes les alertes actives et permet de les résoudre
- */
-
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-toastify";
