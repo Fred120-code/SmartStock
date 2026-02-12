@@ -1,6 +1,5 @@
 "use client";
 
-// ---------- Imports ----------
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState, useMemo } from "react";
 import Wrapper from "../components/Wrapper"; 
@@ -13,27 +12,20 @@ import { ListRestart } from "lucide-react";
 // Nombre d'éléments par page pour la pagination
 const ITEMS_PER_PAGE = 5;
 
-/**
- * Page Transactions
- * - Récupère les produits et transactions pour l'utilisateur connecté
- * - Permet de filtrer par produit et par plage de dates
- * - Affiche une pagination simple
- */
+
 const page = () => {
-  // Récupère l'utilisateur connecté et son email (peut être undefined au premier rendu)
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
-  // Etats locaux
-  const [products, setProducts] = useState<Product[]>([]); // liste des produits de l'utilisateur
-  const [transaction, setTransaction] = useState<Transaction[]>([]); // liste brute des transactions
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // filtrage par produit
-  const [dateFrom, setDateFrom] = useState<string>(""); // date de début
-  const [dateTo, setDateTo] = useState<string>(""); // date de fin
+  const [products, setProducts] = useState<Product[]>([]);
+  const [transaction, setTransaction] = useState<Transaction[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [dateFrom, setDateFrom] = useState<string>(""); 
+  const [dateTo, setDateTo] = useState<string>("");
   const [fileteredTransaction, setFileteredTransaction] = useState<
     Transaction[]
-  >([]); // transactions après application des filtres
-  const [currenPage, setCurrentPage] = useState<number>(1); // page courante (1-indexed)
+  >([]); 
+  const [currenPage, setCurrentPage] = useState<number>(1); 
 
   /**
    * fetchData
@@ -54,24 +46,17 @@ const page = () => {
         }
       }
     } catch (error) {
-      // log de l'erreur côté client
       console.error(error);
     }
   };
 
-  // Charge les données quand l'email (utilisateur) est disponible/change
   useEffect(() => {
     if (email) {
       fetchData();
     }
   }, [email]);
 
-  /**
-   * Filtrage
-   * - Reactively : à chaque changement de selectedProduct, dateFrom, dateTo ou transaction
-   * - Applique les filtres dans l'ordre : produit, dateFrom, dateTo
-   * - Remarque : les comparaisons utilisent `new Date(...)` — attention aux fuseaux horaires
-   */
+  
   useEffect(() => {
     let filtered = transaction;
 
@@ -80,26 +65,25 @@ const page = () => {
       filtered = filtered.filter((tx) => tx.productId === selectedProduct.id);
     }
 
-    // Filtre par date de début (inclus)
+    // Filtre par date de début
     if (dateFrom) {
       filtered = filtered.filter(
         (tx) => new Date(tx.createdAt) <= new Date(dateFrom)
       );
     }
 
-    // Filtre par date de fin (inclus)
+    // Filtre par date de fin
     if (dateTo) {
       filtered = filtered.filter(
         (tx) => new Date(tx.createdAt) <= new Date(dateTo)
       );
     }
 
-    // On met à jour le state filtré et on revient à la première page
     setFileteredTransaction(filtered);
     setCurrentPage(1);
   }, [selectedProduct, dateFrom, dateTo, transaction]);
 
-  // Calcul du nombre total de pages, recalculé uniquement quand la longueur des résultats change
+  // Calcul du nombre total de pages
   const totalPages = useMemo(
     () => Math.ceil(fileteredTransaction.length / ITEMS_PER_PAGE),
     [fileteredTransaction.length]
@@ -120,21 +104,17 @@ const page = () => {
     [currenPage]
   );
 
-  // Transactions affichées sur la page courante (slice appliqué au tableau filtré)
+  // Transactions affichées sur la page courante 
   const currentTransactions = useMemo(
     () => fileteredTransaction.slice(startIndex, startIndex + ITEMS_PER_PAGE),
     [fileteredTransaction, startIndex]
   );
 
-  // ---------- Rendu JSX ----------
   return (
     <Wrapper>
-      {/* Conteneur principal : header (filtres) à gauche et liste des transactions */}
       <div className="flex justify-between items-center flex-wrap gap-4">
-        {/* Zone de filtres : sélection produit, plage de dates, bouton reset */}
         <div className="flex md:justify-between w-full mb-4 space-x-2 md:space-x-0">
           <div>
-            {/* Select pour filtrer par produit ; valeur = id du produit ou vide */}
             <select
               name=""
               id=""
@@ -155,8 +135,7 @@ const page = () => {
             </select>
           </div>
 
-          {/* Inputs pour sélectionner la plage de dates. On change le type en `date` au focus
-              pour afficher le pickeur natif, et on repasse à `text` si vide au blur. */}
+      
           <div className="flex items-center space-x-2">
             <input
               type="text"
@@ -182,7 +161,6 @@ const page = () => {
               }}
             />
 
-            {/* Bouton reset : remet les filtres à l'état initial */}
             <button
               className="btn btn-primary"
               onClick={() => {

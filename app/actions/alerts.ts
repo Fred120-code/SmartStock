@@ -14,7 +14,6 @@ import { prisma } from "@/lib/prisma";
  */
 export async function checkAndCreateStockAlerts(email: string) {
   try {
-    // Vérifie que l'association existe
     const association = await prisma.association.findUnique({
       where: { email },
     });
@@ -23,21 +22,17 @@ export async function checkAndCreateStockAlerts(email: string) {
       throw new Error("Association non trouvée");
     }
 
-    // Récupère tous les produits de l'association
     const products = await prisma.product.findMany({
       where: {
         associationId: association.id,
-        alertEnabled: true, // Alerte activée
+        alertEnabled: true, 
       },
     });
 
     const createdAlerts = [];
 
-    // Vérifie chaque produit
     for (const product of products) {
-      // Si la quantité est inférieure au minimum
       if (product.quantity < product.minQuantity) {
-        // Vérifie s'il y a déjà une alerte active pour ce produit
         const existingAlert = await prisma.stockAlert.findFirst({
           where: {
             productId: product.id,
@@ -45,7 +40,6 @@ export async function checkAndCreateStockAlerts(email: string) {
           },
         });
 
-        // Si pas d'alerte existante, on la crée
         if (!existingAlert) {
           const alert = await prisma.stockAlert.create({
             data: {
@@ -61,7 +55,6 @@ export async function checkAndCreateStockAlerts(email: string) {
           createdAlerts.push(alert);
         }
       } else {
-        // Si la quantité est maintenant OK, on résout les alertes existantes
         await prisma.stockAlert.updateMany({
           where: {
             productId: product.id,
