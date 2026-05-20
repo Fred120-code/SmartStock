@@ -4,8 +4,8 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * Vérifie si une association existe pour l'email donné, sinon la crée
- * @param email - L'email de l'utilisateur/association
- * @param name - Le nom de l'association à créer si elle n'existe pas
+ * @param email
+ * @param name
  */
 export async function checkAndAddAssociation(email: string, name: string) {
   if (!email) return;
@@ -25,8 +25,8 @@ export async function checkAndAddAssociation(email: string, name: string) {
 
 /**
  * Récupère une association par email
- * @param email - L'email de l'utilisateur/association
- * @returns L'objet association trouvé ou undefined
+ * @param email
+ * @returns
  */
 export async function getAssociation(email: string) {
   if (!email) return;

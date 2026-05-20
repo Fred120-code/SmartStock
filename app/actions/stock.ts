@@ -5,10 +5,10 @@ import { OrderItem, Transaction } from "@/types";
 import { getAssociation } from "./associations";
 
 /**
- * Ajoute du stock à un produit et enregistre cette opération comme une transaction d'entrée ("IN").
- * @param productId - L'identifiant du produit à réapprovisionner
- * @param quantity - La quantité à ajouter au stock (doit être > 0)
- * @param email - L'email de l'utilisateur/association (sert à vérifier l'appartenance)
+ * Ajoute du stock à un produit et enregistre cette opération comme une transaction d'entrée
+ * @param productId 
+ * @param quantity 
+ * @param email  
  */
 export async function replenishStockWithTransaction(
   productId: string,
@@ -96,7 +96,6 @@ export async function deductStockWithTransaction(
       }
     }
 
-    // --- Opération atomique ---
     await prisma.$transaction(async (tx) => {
       for (const item of orderItem) {
         await tx.product.update({
@@ -167,7 +166,6 @@ export async function getTransaction(
       },
     });
 
-    // Retourne le produit enrichi du nom de la catégorie (categoryName)
     return transactions.map((tx) => ({
       ...tx,
       categoryName: tx.product.category.name,

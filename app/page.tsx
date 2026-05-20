@@ -26,7 +26,7 @@ export default function Home() {
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Left Column - 2/3 */}
+          {/* Left Column */}
           <div className="xl:col-span-2 space-y-6">
             <div className="bg-base-100 rounded-xl shadow-sm border border-base-300 p-6">
               <ProductOverview email={email} />
@@ -36,7 +36,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column - 1/3 */}
+          {/* Right Column*/}
           <div className="space-y-6">
             <div className="bg-base-100 rounded-xl shadow-sm border border-base-300 p-6">
               <StockSummaryTable email={email} />
