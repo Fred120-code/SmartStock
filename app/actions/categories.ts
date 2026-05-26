@@ -6,9 +6,9 @@ import { getAssociation } from "./associations";
 
 /**
  * Crée une nouvelle catégorie pour une association donnée
- * @param name - Le nom de la catégorie à créer
- * @param email - L'email de l'utilisateur/association
- * @param description - (optionnel) Description de la catégorie
+ * @param name
+ * @param email
+ * @param description 
  */
 export async function createCategory(
   name: string,

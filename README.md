@@ -1,85 +1,126 @@
 # SmartStock
 
-Application Next.js (App Router) pour la gestion de stock d'associations : produits, catégories, transactions, upload d'images, et génération de rapports IA.
+**SmartStock** est une application web moderne de gestion de stock conçue pour les associations et petits commerces. Elle permet de gérer efficacement les produits, catégories, mouvements de stock et générer des rapports intelligents avec l'aide de l'IA.
 
-## Résumé
+---
 
-SmartStock permet de :
+## Fonctionnalités principales
 
-- gérer des associations, catégories et produits (création, modification, suppression),
-- gérer les mouvements de stock (IN / OUT) avec génération de transactions,
-- uploader et supprimer des images produit (dossier `public/uploads`),
-- générer un rapport intelligent via une API utilisant un service IA (Gemini),
-- thèmes UI (fantasy / night) avec adaptation des couleurs (placeholders, h3, inputs, selects, etc.),
-- affichage responsive avec NavBar optimisée pour mobile (icônes seules + bouton bascule).
+### Gestion des Produits
 
-## Tech & libs
+-Créer, modifier et supprimer des produits
+-Gérer les quantités en stock
+-Définir des prix et des unités
+-Upload et gestion des images produit
+-Configuration des seuils d'alerte de stock minimum
 
-- Next.js (App Router)
-- React
-- Tailwind CSS + DaisyUI (thèmes)
-- Prisma (ORM) + **MongoDB** (base de données NoSQL)
-- Recharts (charting)
-- API serverless routes dans `app/api/*`
-- (Optionnel) SDK IA (Gemini) via `GEMINI_API_KEY`
-- (Optionnel) Supabase Storage pour stockage d'images
+### Gestion des Catégories
 
-## Prérequis
+-Organiser les produits par catégories
+-Créer, modifier et supprimer des catégories
+-Visualisation graphique de la distribution des produits
 
-- Node.js (>=16/18 recommandé)
-- npm / pnpm / yarn
-- **MongoDB Atlas** (gratuit, https://mongodb.com/cloud/atlas)
-- Variables d'environnement (voir section suivante)
+### Mouvements de Stock
 
-## Configuration MongoDB
+-Enregistrer les entrées (réapprovisionnement)
+-Enregistrer les sorties (ventes/utilisation)
+-Historique complet des transactions
+ Génération automatique de transactions
 
-SmartStock utilise **MongoDB Atlas** (gratuit jusqu'à 512 MB) comme base de données.
+### Gestion des Alertes
 
-### Étapes rapides :
+- Alertes automatiques quand le stock atteint le minimum
+- Gestion des alertes (actives/résolues)
+- Suivi en temps réel de l'état du stock
 
-1. Crée un cluster M0 gratuit sur https://mongodb.com/cloud/atlas
-2. Crée un utilisateur de base de données
-3. Autorise les connexions réseau (`0.0.0.0/0` pour développement)
-4. Copie la chaîne de connexion (URI)
+### Tableau de Bord
+
+- Vue d'ensemble des produits et statistiques
+- Graphiques de distribution par catégorie
+- Résumé du stock
+- Rapport IA généré avec Google Gemini
+
+### Authentification
+
+- Gestion des associations (multi-tenant)
+- Authentification sécurisée avec Clerk
+
+### Autres Features
+
+- Interface responsive (mobile-first)
+- Thèmes UI (DaisyUI : fantasy, night)
+- Navigation optimisée pour mobile
+- Rapports intelligents générés par IA
+
+---
+
+## 🛠 Stack Technologique
+
+### Frontend
+
+- **Next.js 15** - Framework React avec App Router
+- **React 19** - Bibliothèque UI
+- **TypeScript** - Typage statique
+- **TailwindCSS 4** + **DaisyUI** - Styling et thèmes
+
+### Backend & Base de Données
+
+- **Prisma ORM** - Gestion de la base de données
+- **SQLite** - Base de données légère (développement)
+- **Next.js API Routes** - Endpoints serverless
+
+### Authentification & Services
+
+- **Clerk** - Gestion d'authentification
+- **Google Generative AI (Gemini)** - Génération de rapports IA
+
+### Visualisation
+
+- **Recharts** - Graphiques et statistiques
+- **Lucide React** - Icônes
 
 
-## Variables d'environnement
 
-Créez un fichier `.env.local` à la racine du projet avec au minimum :
 
-- DATABASE_URL="mongodb+srv://user:password@cluster.mongodb.net/smartstock?retryWrites=true&w=majority"
-- GEMINI_API_KEY="votre_cle_gemini" (si vous utilisez la génération IA)
-- NEXT_PUBLIC_SUPABASE_URL="..." (optionnel, pour images)
-- NEXT_PUBLIC_SUPABASE_ANON_KEY="..." (optionnel, pour images)
 
-Redémarrez le serveur Next après modification.
+## Modèle de Données
 
-Voir aussi [.env.example](./.env.example) pour un template complet.
+### Association
 
-## Installation & lancement
+Représente une organisation (entreprise, association, etc.)
 
-1. Installer les dépendances :
-   ```bash
-   npm install
-   ```
+- Propriétaire de produits, catégories, transactions et alertes
+- Authentification via email
 
-3. Générer Prisma & créer les collections :
+### Product
 
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
+Produit du stock
 
-4. Démarrer le serveur en dev :
+- Lié à une catégorie et une association
+- Avec image, prix, quantité, seuil d'alerte
+- Génère des alertes quand le stock est faible
 
-   ```bash
-   npm run dev
-   ```
+### Category
 
-   Ouvre http://localhost:3000
+Catégorie de produits
 
-5. Construction / production :
-   ```bash
-   npm run build
-   npm run start
-   ```
+- Organise les produits
+- Peut avoir une description
+
+### Transaction
+
+Mouvement de stock (entrée/sortie)
+
+- Type : "IN" (réapprovisionnement) ou "OUT" (vente/utilisation)
+- Quantité changée
+- Date de création
+
+### StockAlert
+
+Alerte de stock faible
+
+- Créée automatiquement quand quantité ≤ minQuantity
+- Statut : "active" ou "resolved"
+- Message descriptif
+
+---

@@ -157,7 +157,6 @@ export async function readProduct(
       },
     });
 
-    // Filtre les résultats côté client (case-insensitive) si searchQuery est fourni
     const filteredProducts =
       searchQuery && searchQuery.trim() !== ""
         ? products.filter((product) =>
@@ -165,7 +164,6 @@ export async function readProduct(
           )
         : products;
 
-    // Pour chaque produit, on ajoute le nom de la catégorie (categoryName) pour simplifier l'affichage côté front
     return filteredProducts.map((product) => ({
       ...product,
       categoryName: product.category?.name,
@@ -210,7 +208,6 @@ export async function readProductById(
       return undefined;
     }
 
-    // Retourne le produit enrichi du nom de la catégorie (categoryName)
     return {
       ...product,
       categoryName: product.category?.name,

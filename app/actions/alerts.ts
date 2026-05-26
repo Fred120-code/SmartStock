@@ -4,13 +4,8 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * Fonction pour vérifier et créer des alertes de stock faible
- * Parcourt tous les produits d'une association et crée une alerte si:
- * - Le produit est en-dessous du minimum défini
- * - L'alerte est activée pour ce produit
- * - Une alerte active n'existe pas déjà
- *
- * @param email - Email de l'association
- * @returns Tableau d'alertes créées
+ * @param email
+ * @returns 
  */
 export async function checkAndCreateStockAlerts(email: string) {
   try {
