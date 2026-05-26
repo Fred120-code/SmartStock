@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import ChangeMode from "./components/ChangeMode";
 import { ClerkProvider } from "@clerk/nextjs";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +30,6 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-100 text-base-content`}
         >
           <div style={{ position: "fixed", top: 16, right: 16, zIndex: 100 }}>
-            <ChangeMode />
           </div>
           {children}
         </body>
