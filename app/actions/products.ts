@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db";
 import { FormDataType, Product } from "@/types";
 import { getAssociation } from "./associations";
 
