@@ -7,7 +7,6 @@ import StockSummaryTable from "./components/StockSummaryTable";
 import AiStockReport from "./components/AnalyseIA";
 
 export default function Home() {
-  // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
