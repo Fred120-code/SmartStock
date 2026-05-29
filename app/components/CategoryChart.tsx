@@ -14,6 +14,7 @@ import {
 import EmphyState from "./EmphyState";
 
 const CategoryChart = ({ email }: { email: string }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<ChartData[]>([]);
   const COLOR = {
     default: "#5B63F6",
@@ -21,14 +22,17 @@ const CategoryChart = ({ email }: { email: string }) => {
 
   const fetchProduct = async () => {
     try {
+      setIsLoading(true);
       if (email) {
         const data = await getProductCategoryDistribution(email);
         if (data) {
           setData(data);
+          setIsLoading(false);
         }
       }
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -91,25 +95,34 @@ const CategoryChart = ({ email }: { email: string }) => {
     </ResponsiveContainer>
   );
 
-  if (data.length == 0) {
-    return (
-      <div className="w-full border-2 border-base-200 m-4 p-4 rounded-3xl">
-        <h2 className="">
-          <EmphyState
-            message="Aucun produit pour le moment"
-            IconComponent="PackageSearch"
-          />{" "}
-        </h2>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full border-2 border-base-200 mt-4 p-4 bg-primary/20 rounded-3xl">
-      <h1 className="text-primary text-xl font-semibold mt-4 mb-4">
-        Les meilleurs produits
-      </h1>
-      <h2 className="">{renderChart()}</h2>
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <span className="loading loading-dots loading-xl"></span>
+        </div>
+      ) : (
+        <div>
+          {data.length == 0 ? (
+            <div className="w-full border-2 border-base-200 m-4 p-4 rounded-3xl">
+              <h2 className="">
+                <EmphyState
+                  message="Aucun produit pour le moment"
+                  IconComponent="PackageSearch"
+                />{" "}
+              </h2>
+            </div>
+          ) : (
+            <div>
+              <h1 className="text-primary text-xl font-semibold mt-4 mb-4">
+                Les meilleurs produits
+              </h1>
+              <h2 className="">{renderChart()}</h2>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

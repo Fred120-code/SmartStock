@@ -178,7 +178,7 @@ const ProductsPage = () => {
                         Modifier
                       </Link>
                       <button
-                        className="btn btn-xs w-fit btn-warning"
+                        className="btn btn-xs w-fit btn-warning m-2"
                         onClick={() => {
                           const modal = document.getElementById(
                             `alert_modal_${product.id}`,
