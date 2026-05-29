@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
-import { Trash, Settings } from "lucide-react"; 
+import { Trash, Settings } from "lucide-react";
 import { toast } from "react-toastify";
 
 import Wrapper from "../components/Wrapper";
@@ -13,24 +13,23 @@ import Link from "next/link";
 
 import { Product } from "@/types";
 
-import { deleteProduct, readProduct } from "@/app/actions/index"; 
+import { deleteProduct, readProduct } from "@/app/actions/index";
 
 const ProductsPage = () => {
-
-  // Récupère l'utilisateur connecté
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedProductId, setSelectedProductId] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   /**
    * Fonction pour charger les produits de l'utilisateur connecté
-   * Appelle l'action readProduct côté serveur, puis met à jour le state
    */
   const fetchProduct = async () => {
     try {
+      setIsLoading(true);
       if (email) {
         const products = await readProduct(
           email,
@@ -39,10 +38,12 @@ const ProductsPage = () => {
         );
         if (products) {
           setProducts(products);
+          setIsLoading(false);
         }
       }
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -59,13 +60,11 @@ const ProductsPage = () => {
     }
   }, [searchQuery, selectedProductId, email]);
 
-
   /**
    * Fonction pour supprimer un produit (et son image associée)
    */
 
   const handleDeletProduct = async (product: Product) => {
-
     const confirmDelet = confirm("Voulez-vous supprimer ce produit ????????");
     if (!confirmDelet) return;
 
@@ -89,17 +88,15 @@ const ProductsPage = () => {
         }
       }
     } catch (error) {
-      // Affiche l'erreur en cas d'échec
       console.error(error);
     }
   };
 
-  // Rendu du composant principal
   return (
     <div>
       <Wrapper>
         <div className="overflow-x-auto">
-          <div className="flex gap-2 m-4 items-center">
+          <div className="flex gap-2 m-4 mb-20 items-center justify-between">
             <input
               type="text"
               placeholder="rechercher un produit"
@@ -119,94 +116,100 @@ const ProductsPage = () => {
             </button>
           </div>
 
-          {/* Si aucun produit, affiche un état vide */}
-          {products.length === 0 ? (
+          {isLoading ? (
             <div>
-              <EmphyState
-                message="Aucun produit pour le moment"
-                IconComponent="PackageSearch"
-              />
+              <div className="flex justify-center items-center w-full h-screen">
+                <span className="loading loading-dots loading-xl"></span>
+              </div>
             </div>
           ) : (
+            <div className="flex justify-center items-center w-full mt-20">
+              {products.length === 0 ? (
+                <div className="flex justify-center items-center w-full h-screen">
+                  <EmphyState
+                    message="Aucun produit pour le moment"
+                    IconComponent="PackageSearch"
+                  />
+                </div>
+              ) : (
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Image</th>
+                      <th>Nom</th>
+                      <th>Description</th>
+                      <th>Prix</th>
+                      <th>Quantité</th>
+                      <th>Categorie</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map((product, index) => (
+                      <tr key={product.id}>
+                        <th>{index + 1}</th>
 
-            // Sinon, affiche le tableau des produits
-            <table className="table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Image</th>
-                  <th>Nom</th>
-                  <th>Description</th>
-                  <th>Prix</th>
-                  <th>Quantité</th>
-                  <th>Categorie</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product, index) => (
-                  <tr key={product.id}>
-                   
-                    <th>{index + 1}</th>
-                   
-                    <td>
-                      <ProductImage
-                        src={product.imageUrl}
-                        alt={product.imageUrl}
-                        heightClass="h-12"
-                        widhtClass="w-12"
-                      />
-                    </td>
-                 
-                    <td>{product.name}</td>
-             
-                    <td>{product.description}</td>
-                    
-                    <td>{product.price} FCFA</td>
-          
-                    <td>
-                      {product.quantity} {product.unit}
-                    </td>
-                  
-                    <td>{product.categoryName}</td>
-                   
-                    <td className="felx flex-col gap-4">
-                      <Link
-                        className="btn btn-xs w-fit btn-primary"
-                        href={`/update-product/${product.id}`}
-                      >
-                        Modifier
-                      </Link>
-                      <button
-                        className="btn btn-xs w-fit btn-warning m-2"
-                        onClick={() => {
-                          const modal = document.getElementById(
-                            `alert_modal_${product.id}`,
-                          ) as HTMLDialogElement;
-                          modal?.showModal();
-                        }}
-                        title="Configurer les alertes"
-                      >
-                        <Settings className="w-4 h-4" />
-                      </button>
-                      <button
-                        className="btn btn-xs w-fit"
-                        onClick={() => handleDeletProduct(product)}
-                      >
-                        <Trash className="w-4 h-4" />
-                      </button>
-                      <AlertSettingsModal
-                        productId={product.id}
-                        productName={product.name}
-                        currentMinQuantity={product.minQuantity}
-                        currentAlertEnabled={product.alertEnabled}
-                        onSave={fetchProduct}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        <td>
+                          <ProductImage
+                            src={product.imageUrl}
+                            alt={product.imageUrl}
+                            heightClass="h-12"
+                            widhtClass="w-12"
+                          />
+                        </td>
+
+                        <td>{product.name}</td>
+
+                        <td>{product.description}</td>
+
+                        <td>{product.price} FCFA</td>
+
+                        <td>
+                          {product.quantity} {product.unit}
+                        </td>
+
+                        <td>{product.categoryName}</td>
+
+                        <td className="felx flex-col gap-4">
+                          <Link
+                            className="btn btn-xs w-fit btn-primary"
+                            href={`/update-product/${product.id}`}
+                          >
+                            Modifier
+                          </Link>
+                          <button
+                            className="btn btn-xs w-fit btn-warning m-2"
+                            onClick={() => {
+                              const modal = document.getElementById(
+                                `alert_modal_${product.id}`,
+                              ) as HTMLDialogElement;
+                              modal?.showModal();
+                            }}
+                            title="Configurer les alertes"
+                          >
+                            <Settings className="w-4 h-4" />
+                          </button>
+                          <button
+                            className="btn btn-xs w-fit"
+                            onClick={() => handleDeletProduct(product)}
+                          >
+                            <Trash className="w-4 h-4" />
+                          </button>
+                          <AlertSettingsModal
+                            productId={product.id}
+                            productName={product.name}
+                            currentMinQuantity={product.minQuantity}
+                            currentAlertEnabled={product.alertEnabled}
+                            onSave={fetchProduct}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           )}
         </div>
       </Wrapper>

@@ -2,16 +2,15 @@
 
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect, useState, useMemo } from "react";
-import Wrapper from "../components/Wrapper"; 
-import { Transaction, Product } from "@/types"; 
-import { getTransaction, readProduct } from "@/app/actions/index"; 
-import EmphyState from "../components/EmphyState"; 
-import TransactionComponent from "../components/TransactionComponent"; 
+import Wrapper from "../components/Wrapper";
+import { Transaction, Product } from "@/types";
+import { getTransaction, readProduct } from "@/app/actions/index";
+import EmphyState from "../components/EmphyState";
+import TransactionComponent from "../components/TransactionComponent";
 import { ListRestart } from "lucide-react";
 
 // Nombre d'éléments par page pour la pagination
 const ITEMS_PER_PAGE = 5;
-
 
 const page = () => {
   const { user } = useUser();
@@ -20,21 +19,17 @@ const page = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [transaction, setTransaction] = useState<Transaction[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [dateFrom, setDateFrom] = useState<string>(""); 
+  const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [fileteredTransaction, setFileteredTransaction] = useState<
     Transaction[]
-  >([]); 
-  const [currenPage, setCurrentPage] = useState<number>(1); 
+  >([]);
+  const [currenPage, setCurrentPage] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * fetchData
-   * - Charge depuis le serveur les produits et transactions pour l'utilisateur
-   * - Utilise les actions centralisées dans `app/actions.ts`
-   * - Gère les erreurs en console (TODO: afficher une UI d'erreur si besoin)
-   */
   const fetchData = async () => {
     try {
+      setIsLoading(true);
       if (email) {
         const products = await readProduct(email);
         const txs = await getTransaction(email);
@@ -43,10 +38,12 @@ const page = () => {
         }
         if (txs) {
           setTransaction(txs);
+          setIsLoading(false);
         }
       }
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -56,7 +53,6 @@ const page = () => {
     }
   }, [email]);
 
-  
   useEffect(() => {
     let filtered = transaction;
 
@@ -68,14 +64,14 @@ const page = () => {
     // Filtre par date de début
     if (dateFrom) {
       filtered = filtered.filter(
-        (tx) => new Date(tx.createdAt) <= new Date(dateFrom)
+        (tx) => new Date(tx.createdAt) <= new Date(dateFrom),
       );
     }
 
     // Filtre par date de fin
     if (dateTo) {
       filtered = filtered.filter(
-        (tx) => new Date(tx.createdAt) <= new Date(dateTo)
+        (tx) => new Date(tx.createdAt) <= new Date(dateTo),
       );
     }
 
@@ -86,7 +82,7 @@ const page = () => {
   // Calcul du nombre total de pages
   const totalPages = useMemo(
     () => Math.ceil(fileteredTransaction.length / ITEMS_PER_PAGE),
-    [fileteredTransaction.length]
+    [fileteredTransaction.length],
   );
 
   // Si le nombre total de pages diminue (par ex. suite à un filtre), on ajuste la page courante
@@ -101,13 +97,13 @@ const page = () => {
   // Index du premier élément sur la page courante
   const startIndex = useMemo(
     () => (currenPage - 1) * ITEMS_PER_PAGE,
-    [currenPage]
+    [currenPage],
   );
 
-  // Transactions affichées sur la page courante 
+  // Transactions affichées sur la page courante
   const currentTransactions = useMemo(
     () => fileteredTransaction.slice(startIndex, startIndex + ITEMS_PER_PAGE),
-    [fileteredTransaction, startIndex]
+    [fileteredTransaction, startIndex],
   );
 
   return (
@@ -135,7 +131,6 @@ const page = () => {
             </select>
           </div>
 
-      
           <div className="flex items-center space-x-2">
             <input
               type="text"
@@ -174,19 +169,26 @@ const page = () => {
           </div>
         </div>
 
-        {/* Affichage : message si aucune transaction, sinon la liste paginée */}
-        {transaction.length == 0 ? (
-          <div className="ml-17 mt-20">
-            <EmphyState
-              message="Aucun transaction pour le moment"
-              IconComponent="ScanLine"
-            />
+        {isLoading ? (
+          <div className="flex justify-center items-center w-full h-screen">
+            <span className="loading loading-dots loading-xl"></span>
           </div>
         ) : (
-          <div className="flex flex-col gap-2 w-full">
-            {currentTransactions.map((tx) => (
-              <TransactionComponent key={tx.id} tx={tx} />
-            ))}
+          <div className="flex justify-center items-center w-full">
+            {transaction.length == 0 ? (
+              <div className="ml-17 mt-50">
+                <EmphyState
+                  message="Aucun transaction pour le moment"
+                  IconComponent="ScanLine"
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2 w-full">
+                {currentTransactions.map((tx) => (
+                  <TransactionComponent key={tx.id} tx={tx} />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
