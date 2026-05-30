@@ -1,24 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper"; 
-import { useUser } from "@clerk/nextjs"; // Hook pour récupérer l'utilisateur connecté
+import { useUser } from "@clerk/nextjs"; 
 import { Category } from "@prisma/client"; 
-import { FormDataType } from "@/types"; // Type pour les données du formulaire produit
-import { createProduct, readCeategory } from "@/app/actions/index"; // Actions pour créer un produit et lire les catégories
+import { FormDataType } from "@/types"; 
+import { createProduct, readCeategory } from "@/app/actions/index"; 
 import { FileImage } from "lucide-react"; 
 import ProductImage from "../components/ProductImage"; 
 import { toast } from "react-toastify"; 
-import { useRouter } from "next/navigation"; // Pour la navigation après création
+import { useRouter } from "next/navigation";
 
 const page = () => {
-  // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
-  // Pour la navigation après création du produit
   const router = useRouter();
 
-  // États pour gérer le fichier image, l'aperçu, les catégories et les champs du formulaire
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -32,7 +29,6 @@ const page = () => {
     quantity: 0,
   });
 
-  // Gère le changement des champs du formulaire
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -42,7 +38,6 @@ const page = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Charge les catégories de l'utilisateur connecté au chargement de la page ou changement d'email
   useEffect(() => {
     const fetchCateogories = async () => {
       try {
@@ -99,18 +94,14 @@ const page = () => {
     }
   };
 
-  // Rendu du composant principal
   return (
     <Wrapper>
       <div className="flex justify-between items-center">
         <div>
-          {/* Titre de la page */}
           <h1 className="font-bold text-2xl mb-4">Créer un produit</h1>
 
           <section className="flex md:flex-row flex-col">
-            {/* Formulaire de création de produit */}
             <div className="space-y-4 md:w-[450px]">
-              {/* Champ nom */}
               <input
                 type="text"
                 name="name"
@@ -120,7 +111,6 @@ const page = () => {
                 onChange={handleChange}
               />
 
-              {/* Champ description */}
               <textarea
                 name="description"
                 placeholder="Description"
@@ -129,7 +119,6 @@ const page = () => {
                 onChange={handleChange}
               ></textarea>
 
-              {/* Champ prix */}
               <input
                 type="number"
                 name="price"
@@ -138,7 +127,6 @@ const page = () => {
                 onChange={handleChange}
               />
 
-              {/* Champ quantité */}
               <input
                 type="number"
                 name="quantity"
@@ -147,7 +135,6 @@ const page = () => {
                 onChange={handleChange}
               />
 
-              {/* Sélecteur de catégorie */}
               <select
                 className="select selec-bordered"
                 value={formData.categoryId}
@@ -162,7 +149,6 @@ const page = () => {
                 ))}
               </select>
 
-              {/* Sélecteur d'unité */}
               <select
                 className="select selec-bordered"
                 value={formData.unit}
@@ -185,13 +171,12 @@ const page = () => {
                 onChange={handleFileChange}
               />
 
-              {/* Bouton de soumission */}
               <button className="btn btn-primary" onClick={handleSubmit}>
                 Creer le produit
               </button>
             </div>
 
-            {/* Aperçu de l'image sélectionnée ou icône par défaut */}
+            {/* Aperçu de l'image sélectionnée  */}
             <div className="md:ml-10 md:w-[300px] mt-4 md:mt-0 border-2 border-primary md:h-[300px] p-5 flex justify-center items-center rounded-3xl">
               {previewUrl && previewUrl !== "" ? (
                 <div>

@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { Category } from "@prisma/client";
 import EmphyState from "../components/EmphyState";
 import { Pencil, Trash } from "lucide-react";
+
 const page = () => {
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
@@ -23,13 +24,16 @@ const page = () => {
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [categorie, setCategorie] = useState<Category[]>([]);
+  const [isLoading, setIsloading] = useState(false);
 
   // Charge les catégories de l'utilisateur connecté
   const loadCategory = async () => {
+    setIsloading(true);
     if (email) {
       const data = await readCeategory(email);
       if (data) {
         setCategorie(data);
+        setIsloading(false);
       }
     }
   };
@@ -107,7 +111,6 @@ const page = () => {
     toast.success("Categories supprimée avec succes");
   };
 
-  // Rendu du composant principal
   return (
     <Wrapper>
       <div>
@@ -122,43 +125,51 @@ const page = () => {
         </div>
 
         {/* Liste des catégories ou état vide */}
-        {categorie.length > 0 ? (
-          <div>
-            {categorie.map((categorie) => (
-              <div
-                key={categorie.id}
-                className="flex mb-2 p-5 border-2 border-base-200 rounded-3xl justify-between items-center"
-              >
-                <div>
-                  <strong>{categorie.name}</strong>
-                  <div className="text-sm">{categorie.description}</div>
-                </div>
-                <div className="flex gap-2">
-                  {/* Bouton d'édition */}
-                  <button
-                    className="btn btn-sm rounded-sm"
-                    onClick={() => openEditModal(categorie)}
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  {/* Bouton de suppression */}
-                  <button
-                    className="btn btn-sm btn-error rounded-sm"
-                    onClick={() => handleDeleteCategory(categorie.id)}
-                  >
-                    <Trash className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+        {isLoading ? (
+          <div className="flex justify-center items-center w-full h-screen">
+            <span className="loading loading-dots loading-xl"></span>
           </div>
         ) : (
-          // Affiche un état vide si aucune catégorie n'est disponible
-          <EmphyState
-            message={"Aucune categorie disponibe"}
-            IconComponent="Group"
-          />
+          <div>
+            {categorie.length > 0 ? (
+              <div>
+                {categorie.map((categorie) => (
+                  <div
+                    key={categorie.id}
+                    className="flex mb-2 p-5 border-2 border-base-200 rounded-3xl justify-between items-center"
+                  >
+                    <div>
+                      <strong>{categorie.name}</strong>
+                      <div className="text-sm">{categorie.description}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      {/* Bouton d'édition */}
+                      <button
+                        className="btn btn-sm rounded-sm"
+                        onClick={() => openEditModal(categorie)}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      {/* Bouton de suppression */}
+                      <button
+                        className="btn btn-sm btn-error rounded-sm"
+                        onClick={() => handleDeleteCategory(categorie.id)}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmphyState
+                message={"Aucune categorie disponibe"}
+                IconComponent="Group"
+              />
+            )}
+          </div>
         )}
+
       </div>
       {/* Modal de création/édition de catégorie */}
       <CategorieModal
