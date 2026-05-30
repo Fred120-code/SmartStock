@@ -53,7 +53,7 @@ const NavBar = () => {
     };
 
     fetchAlertCount();
-    const interval = setInterval(fetchAlertCount, 30000);
+    const interval = setInterval(fetchAlertCount, 5000);
     return () => clearInterval(interval);
   }, [email]);
 

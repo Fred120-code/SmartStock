@@ -5,6 +5,7 @@ import ProductOverview from "./components/ProductOverview";
 import CategoryChart from "./components/CategoryChart";
 import StockSummaryTable from "./components/StockSummaryTable";
 import AiStockReport from "./components/AnalyseIA";
+import Stock from "./components/Stock";
 
 export default function Home() {
   const { user } = useUser();
@@ -46,6 +47,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <Stock />
     </Wrapper>
   );
 }

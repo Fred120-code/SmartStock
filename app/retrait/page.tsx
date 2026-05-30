@@ -13,37 +13,40 @@ import EmphyState from "../components/EmphyState";
 import ProductImage from "../components/ProductImage";
 
 const page = () => {
-  // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
-  // State pour stocker la liste des produits récupérés
   const [products, setProducts] = useState<Product[]>([]);
 
   const [order, setOrder] = useState<OrderItem[]>([]);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedProductId, setSelectedProductId] = useState<string[]>([]);
+  const [isLoading, setIsloading] = useState(false);
 
   /**
    * Fonction pour charger les produits de l'utilisateur connecté
-   * Appelle l'action readProduct côté serveur, puis met à jour le state
    */
   const fetchProduct = async () => {
     try {
+      setIsloading(true);
       if (email) {
-        const products = await readProduct(email, searchQuery, selectedProductId);
+        const products = await readProduct(
+          email,
+          searchQuery,
+          selectedProductId,
+        );
         if (products) {
           setProducts(products);
+          setIsloading(false);
         }
       }
     } catch (error) {
-      // Affiche l'erreur en cas d'échec
       console.error(error);
+      setIsloading(false);
     }
   };
 
-  // Charge les produits au chargement de la page ou lors d'un changement d'email utilisateur
   useEffect(() => {
     if (email) {
       fetchProduct();
@@ -53,7 +56,9 @@ const page = () => {
   //permet de rechercher un produit specifique en flitrant la liste de produit
   const filteredProduct = products
     .filter((product) =>
-      product.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
+      product.name
+        .toLocaleLowerCase()
+        .includes(searchQuery.toLocaleLowerCase()),
     )
     .filter((product) => !selectedProductId.includes(product.id))
     .slice(0, 10);
@@ -62,7 +67,7 @@ const page = () => {
   const handleAddToCard = (product: Product) => {
     setOrder((preOrder) => {
       const existingProduct = preOrder.find(
-        (item) => item.productId === product.id
+        (item) => item.productId === product.id,
       );
       let updateOrder;
 
@@ -73,7 +78,7 @@ const page = () => {
                 ...item,
                 quantity: Math.min(item.quantity + 1, product.quantity),
               }
-            : item
+            : item,
         );
       } else {
         updateOrder = [
@@ -92,7 +97,7 @@ const page = () => {
       setSelectedProductId((prevSelected) =>
         prevSelected.includes(product.id)
           ? prevSelected
-          : [...prevSelected, product.id]
+          : [...prevSelected, product.id],
       );
 
       return updateOrder;
@@ -103,8 +108,8 @@ const page = () => {
   const handleQuantityChange = (productId: string, quantity: number) => {
     setOrder((preOrder) =>
       preOrder.map((item) =>
-        item.productId === productId ? { ...item, quantity } : item
-      )
+        item.productId === productId ? { ...item, quantity } : item,
+      ),
     );
   };
 
@@ -112,10 +117,10 @@ const page = () => {
   const handleRemoveFronCard = (productId: string) => {
     setOrder((preOrder) => {
       const updatedOrder = preOrder.filter(
-        (item) => item.productId !== productId
+        (item) => item.productId !== productId,
       );
       setSelectedProductId((prevSelectedProductIds) =>
-        prevSelectedProductIds.filter((id) => id !== productId)
+        prevSelectedProductIds.filter((id) => id !== productId),
       );
 
       return updatedOrder;
@@ -155,25 +160,31 @@ const page = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <div className="space-y-4 w-full ">
-            {filteredProduct.length > 0 ? (
-              filteredProduct.map((product, index) => (
-                <ProductComponent
-                  product={product}
-                  key={index}
-                  add={true}
-                  handleAddToCard={handleAddToCard}
-                />
-              ))
-            ) : (
-              <div>
-                <EmphyState
-                  message="Aucun produit pour le moment"
-                  IconComponent="PackageSearch"
-                />
-              </div>
-            )}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center w-full h-screen">
+              <span className="loading loading-dots loading-xl"></span>
+            </div>
+          ) : (
+            <div className="space-y-4 w-full ">
+              {filteredProduct.length > 0 ? (
+                filteredProduct.map((product, index) => (
+                  <ProductComponent
+                    product={product}
+                    key={index}
+                    add={true}
+                    handleAddToCard={handleAddToCard}
+                  />
+                ))
+              ) : (
+                <div>
+                  <EmphyState
+                    message="Aucun produit pour le moment"
+                    IconComponent="PackageSearch"
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <div className="md:w-2/3 p-3 md:mb-0 md:ml-4 mb-4 h-fit border-2 border-base-200 rounded-3xl overflow-x-auto">
           {order.length > 0 ? (
@@ -210,7 +221,7 @@ const page = () => {
                           onChange={(e) =>
                             handleQuantityChange(
                               item.productId,
-                              Number(e.target.value)
+                              Number(e.target.value),
                             )
                           }
                         />

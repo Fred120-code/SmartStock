@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, PackagePlus } from "lucide-react";
 
 import Wrapper from "../components/Wrapper";
 import EmphyState from "../components/EmphyState";
@@ -131,12 +131,20 @@ const AlertsPage = () => {
                   </p>
 
                   <div className="card-actions justify-end mt-4">
-                    <a
-                      href={`/update-product/${alert.product.id}`}
-                      className="btn btn-sm btn-info"
+                    {/* Bouton Alimenter */}
+                    <button
+                      className="btn btn-primary w-full gap-2 mb-4"
+                      onClick={() =>
+                        (
+                          document.getElementById(
+                            "my_modal_stock",
+                          ) as HTMLDialogElement
+                        ).showModal()
+                      }
                     >
-                      Réapprovisionner
-                    </a>
+                      <PackagePlus className="w-5 h-5" />
+                      Alimenter le stock
+                    </button>
                   </div>
                 </div>
               </div>

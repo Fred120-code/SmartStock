@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 const page = ({ params }: { params: Promise<{ productId: string }> }) => {
-  // Récupère l'utilisateur connecté et son email
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress as string;
 
@@ -53,7 +52,6 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
     }
   };
 
-  // Charge les catégories de l'utilisateur connecté au chargement de la page ou changement d'email
   useEffect(() => {
     fetchProduct();
   }, [email]);
@@ -93,11 +91,12 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
           dataDelete = await resDelete.json();
         } catch (err) {
           console.error(err);
-          // Si la réponse n'est pas du JSON, on ignore (l'API est censée toujours renvoyer du JSON maintenant)
         }
+
         if (!dataDelete.succes) {
           throw new Error("Erreur lors de le suppression de l'image");
         }
+
         // Upload de la nouvelle image
         const imagedata = new FormData();
         imagedata.append("file", file);
@@ -107,15 +106,16 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
         });
 
         let data: { succes: boolean; path?: string } = { succes: false };
+
         try {
           data = await res.json();
         } catch (err) {
-          // Si la réponse n'est pas du JSON, on lève une erreur
           throw new Error("Réponse inattendue lors de l'upload de l'image");
         }
         if (!data.succes) {
           throw new Error("Erreur lors de l'upload de l'image");
         }
+
         imageUrl = data.path || "";
         formData.imageUrl = imageUrl;
         await updateProduct(formData, email);
@@ -185,6 +185,7 @@ const page = ({ params }: { params: Promise<{ productId: string }> }) => {
                   className="input input-bordered w-full"
                   value={formData.quantity}
                   onChange={handleChange}
+                  disabled
                 />
 
                 {/* Champ categories */}
